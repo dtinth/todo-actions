@@ -1,4 +1,4 @@
-console.log('Files in repo')
+console.log('Files containing TODO marker:')
 console.log(
   require('child_process')
     .execSync('git grep -Il TODO:', { encoding: 'utf8' })
