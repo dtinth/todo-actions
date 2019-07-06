@@ -2,8 +2,8 @@ FROM node:12.6.0-slim
 
 LABEL "com.github.actions.name"="TODO"
 LABEL "com.github.actions.description"="Convert TODO comments to issues"
-LABEL "com.github.actions.icon"="mic"
-LABEL "com.github.actions.color"="alert-circle"
+LABEL "com.github.actions.icon"="alert-circle"
+LABEL "com.github.actions.color"="gray-dark"
 
 LABEL "repository"="http://github.com/dtinth/todo-actions"
 LABEL "homepage"="http://github.com/dtinth/todo-actions"
