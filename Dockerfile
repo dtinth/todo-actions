@@ -1,4 +1,4 @@
-FROM node:12.6.0-slim
+FROM node:12.6.0
 
 LABEL "com.github.actions.name"="TODO"
 LABEL "com.github.actions.description"="Convert TODO comments to issues"
