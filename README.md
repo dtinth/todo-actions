@@ -26,3 +26,24 @@ Turn TODO in source code into issues and close them when they are gone. Runs on 
    ```
 
 6. The change is committed and pushed to the repository. If the push is successful, then it is done. Otherwise, someone else has made another commit to the repository, the action on that commit will take care of committing.
+
+## Parsing TODO comments
+
+1. A TODO marker looks like this:
+
+    - `TODO:` — new, unidentified to-do item
+    - `TODO [$5d20dc8e6a26d44c2afd08c6]` — identified to-do item, but an issue has not been created
+    - `TODO [#1]` — a to-do item with an associated issue
+
+2. A TODO marker must be preceded by a white space.
+   Before that whitespace, there should be no alphanumeric characters.
+   Everything before the TODO marker is called a prefix.
+
+3. The TODO contents follows the marker, as long as subsequent lines start with the same prefix as the first.
+
+Example:
+
+```
+// TODO: Subject
+// Body here
+```
