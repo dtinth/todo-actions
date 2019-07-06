@@ -14,4 +14,5 @@ ENV GIT_AUTHOR_NAME=TODO
 ENV EMAIL=todo-collector[bot]@users.noreply.github.com
 
 ADD entrypoint.sh /entrypoint.sh
+ADD src /usr/app/src
 ENTRYPOINT ["/entrypoint.sh"]
