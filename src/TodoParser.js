@@ -12,16 +12,32 @@
 exports.parseTodos = function(file) {
   /** @type {ITodo[]} */
   const out = []
-  for (const line of file.contents.lines) {
-    const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:(?:\s(.*))?/)
+  for (const [lineIndex, line] of file.contents.lines.entries()) {
+    const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:(.*)/)
     if (match) {
-      out.push({
+      const prefix = match[1]
+      const suffix = match[3]
+      const startIndex = lineIndex
+      let _reference = match[2] || null
+
+      /** @type {ITodo} */
+      const todo = {
         file,
         // TODO:
         // Parse title that sits on the next line.
-        title: match[3] || '',
-        reference: match[2] || null,
-      })
+        title: (match[3] || '').trim(),
+        get reference() {
+          return _reference
+        },
+        set reference(newRef) {
+          _reference = newRef
+          file.contents.changeLine(
+            startIndex,
+            `${prefix}TODO${newRef ? ` [${newRef}]` : ''}:${suffix}`,
+          )
+        },
+      }
+      out.push(todo)
     }
   }
   return out

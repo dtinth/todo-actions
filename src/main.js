@@ -13,6 +13,7 @@ require('yargs')
       .filter(name => name)
 
     const todoComments = []
+    const files = []
 
     log.info('Parsing TODO tags...')
     for (const filePath of filesWithTodoMarker) {
@@ -23,9 +24,21 @@ require('yargs')
       const todos = parseTodos(file)
       log.info('%s: %s found', filePath, todos.length)
       todoComments.push(...todos)
+      files.push(file)
     }
 
-    log.info('Total: %s found', todoComments.length)
+    log.info('Total TODOs found: %s', todoComments.length)
+
+    const todosWithoutReference = todoComments.filter(todo => !todo.reference)
+    log.info('TODOs without references: %s', todosWithoutReference.length)
+    if (todosWithoutReference.length > 0) {
+      for (const todo of todosWithoutReference) {
+        todo.reference = require('bson-objectid').default.generate()
+      }
+      const changedFiles = files.filter(file => file.contents.changed)
+      log.info('Files changed: %s', changedFiles.length)
+      for (const file of changedFiles) file.save()
+    }
   })
   .strict()
   .demandCommand()
