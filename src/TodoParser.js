@@ -1,5 +1,6 @@
 /**
  * @typedef {object} ITodo
+ * @prop {import('./File').IFile} file
  * @prop {string | null} reference
  * @prop {string} title
  */
@@ -15,6 +16,7 @@ exports.parseTodos = function(file) {
     const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:(?:\s(.*))?/)
     if (match) {
       out.push({
+        file,
         // TODO:
         // Parse title that sits on the next line.
         title: match[3] || '',

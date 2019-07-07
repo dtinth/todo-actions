@@ -49,6 +49,7 @@ describe('parseTodos', () => {
     )
     const result = parseTodos(file)
     expect(result).toHaveLength(6)
+    expect(result[0].file).toBe(file)
     expect(result[0].title).toBe('Item 1')
   })
 
