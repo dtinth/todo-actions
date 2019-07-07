@@ -44,6 +44,18 @@ require('yargs')
         'add',
         ...changedFiles.map(file => file.fileName),
       ])
+      const commitMessage = 'Collect TODO comments'
+      require('child_process').execFileSync('git', ['commit', '-F', '-'], {
+        stdio: 'inherit',
+        input: commitMessage + '\n',
+      })
+      if (!process.env.GITHUB_TOKEN) {
+        throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
+      }
+      require('child_process').execSync(
+        'git push origin $(git rev-parse --abbrev-ref HEAD)',
+        { stdio: 'inherit' },
+      )
     }
   })
   .strict()
