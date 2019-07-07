@@ -1,5 +1,6 @@
 /**
  * @typedef {object} ITodo
+ * @prop {string | null} reference
  */
 
 /**
@@ -12,7 +13,9 @@ exports.parseTodos = function(file) {
   for (const line of file.lines) {
     const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:/)
     if (match) {
-      out.push({})
+      out.push({
+        reference: match[2] || null,
+      })
     }
   }
   return out

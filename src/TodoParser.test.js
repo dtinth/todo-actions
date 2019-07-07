@@ -66,5 +66,11 @@ describe('parseTodos', () => {
     )
     const result = parseTodos(file)
     expect(result).toHaveLength(4)
+    expect(result[0].reference).toBe('#1')
+    expect(result[1].reference).toBe('$wow')
+    expect(result[2].reference).toBe('todo-actions#1')
+    expect(result[3].reference).toBe(
+      'https://github.com/dtinth/todo-actions/issues/1',
+    )
   })
 })
