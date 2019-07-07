@@ -23,7 +23,7 @@ exports.parseTodos = function(file) {
       /** @type {ITodo} */
       const todo = {
         file,
-        // TODO:
+        // TODO [$5d21c7a2b86bd10007ba06a9]:
         // Parse title that sits on the next line.
         title: (match[3] || '').trim(),
         get reference() {

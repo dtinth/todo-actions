@@ -17,7 +17,7 @@ require('yargs')
 
     log.info('Parsing TODO tags...')
     for (const filePath of filesWithTodoMarker) {
-      // TODO: Implement ignoring paths
+      // TODO [$5d21c7a2b86bd10007ba06aa]: Implement ignoring paths
       if (filePath === 'README.md') continue
 
       const file = new File(filePath)
