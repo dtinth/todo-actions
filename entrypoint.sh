@@ -1,2 +1,2 @@
 #!/bin/sh
-sh -c "node /usr/app/src/main.js $*"
+sh -c "node /app/src/main.js $*"
