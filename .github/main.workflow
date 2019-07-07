@@ -1,9 +1,9 @@
-workflow "New workflow" {
+workflow "Process TODO comments" {
   on = "push"
-  resolves = ["./"]
+  resolves = ["Collect TODO"]
 }
 
-action "./" {
+action "Collect TODO" {
   uses = "./"
   secrets = ["GITHUB_TOKEN"]
 }
