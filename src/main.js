@@ -33,7 +33,7 @@ require('yargs')
     log.info('TODOs without references: %s', todosWithoutReference.length)
     if (todosWithoutReference.length > 0) {
       for (const todo of todosWithoutReference) {
-        todo.reference = require('bson-objectid').default.generate()
+        todo.reference = `$${require('bson-objectid').default.generate()}`
       }
       const changedFiles = files.filter(file => file.contents.changed)
       log.info('Files changed: %s', changedFiles.length)
