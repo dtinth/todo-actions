@@ -5,10 +5,7 @@
  *
  * @prop {string} fileName
  *
- * @prop {string[]} lines
- *  File contents as array of lines.
- *  The newline character has been stripped.
- *  May be mutated to change the contents of the file.
+ * @prop {FileContents} contents
  *
  * @prop {() => void} save
  *  Saves the file back into the file system.
@@ -25,13 +22,19 @@ exports.File = class File {
     ensureFileInterface(this)
 
     this.fileName = fileName
-    this.lines = require('fs')
-      .readFileSync(fileName, 'utf8')
-      .split('\n')
+    this.contents = new FileContents(
+      require('fs').readFileSync(fileName, 'utf8'),
+    )
   }
 
   save() {
-    require('fs').writeFileSync(this.fileName, this.lines.join('\n'), 'utf8')
+    if (this.contents.changed) {
+      require('fs').writeFileSync(
+        this.fileName,
+        this.contents.toString(),
+        'utf8',
+      )
+    }
   }
 }
 
@@ -47,11 +50,50 @@ exports.MockFile = class MockFile {
     ensureFileInterface(this)
 
     this.fileName = fileName
-    this.lines = contents.split('\n')
+    this.contents = new FileContents(contents)
   }
 
   save() {}
 }
+
+class FileContents {
+  /**
+   * @param {string} contents
+   */
+  constructor(contents) {
+    /**
+     * @private
+     */
+    this._lines = contents.split('\n')
+
+    this.changed = false
+  }
+
+  /**
+   * File contents as array of lines.
+   * The newline character has been stripped.
+   * May be mutated to change the contents of the file.
+   */
+  get lines() {
+    return /** @type {ReadonlyArray<string>} */ (this._lines)
+  }
+
+  /**
+   * Change a line
+   * @param {number} lineIndex
+   * @param {string} newLineContents
+   */
+  changeLine(lineIndex, newLineContents) {
+    this._lines[lineIndex] = newLineContents
+    this.changed = true
+  }
+
+  toString() {
+    return this._lines.join('\n')
+  }
+}
+
+exports.FileContents = FileContents
 
 /**
  * For type checking.
