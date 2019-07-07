@@ -37,7 +37,13 @@ require('yargs')
       }
       const changedFiles = files.filter(file => file.contents.changed)
       log.info('Files changed: %s', changedFiles.length)
-      for (const file of changedFiles) file.save()
+      for (const file of changedFiles) {
+        file.save()
+      }
+      require('child_process').execFileSync('git', [
+        'add',
+        ...changedFiles.map(file => file.fileName),
+      ])
     }
   })
   .strict()
