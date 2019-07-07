@@ -13,6 +13,7 @@ ENV GIT_COMMITTER_NAME=TODO
 ENV GIT_AUTHOR_NAME=TODO
 ENV EMAIL=todo-collector[bot]@users.noreply.github.com
 
-ADD entrypoint.sh /entrypoint.sh
+ADD entrypoint.sh package.json yarn.lock /usr/app
+RUN yarn --frozen-lockfile --production
 ADD src /usr/app/src
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/app/entrypoint.sh"]
