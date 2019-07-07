@@ -50,4 +50,21 @@ describe('parseTodos', () => {
     const result = parseTodos(file)
     expect(result).toHaveLength(6)
   })
+
+  it('detects marker with reference', () => {
+    const file = new MockFile(
+      'main.js',
+      `
+      // ${MARKER} [#1]: Item 1
+
+      // ${MARKER} [$wow]: Item 2
+
+      // ${MARKER} [todo-actions#1]: Item 3
+
+      // ${MARKER} [https://github.com/dtinth/todo-actions/issues/1]: Item 4
+      `,
+    )
+    const result = parseTodos(file)
+    expect(result).toHaveLength(4)
+  })
 })

@@ -10,7 +10,7 @@ exports.parseTodos = function(file) {
   /** @type {ITodo[]} */
   const out = []
   for (const line of file.lines) {
-    const match = line.match(/^(\W+\s)TODO:/)
+    const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:/)
     if (match) {
       out.push({})
     }
