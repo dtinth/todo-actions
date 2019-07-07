@@ -7,5 +7,10 @@
   },
   "scripts": {
     "test": "jest"
+  },
+  "dependencies": {
+    "bistre": "^1.0.1",
+    "bole": "^3.0.2",
+    "yargs": "^13.2.4"
   }
 }
