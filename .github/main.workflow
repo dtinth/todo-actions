@@ -5,7 +5,10 @@ workflow "Process TODO comments" {
 
 action "Collect TODO" {
   uses = "./"
-  secrets = ["GITHUB_TOKEN"]
+  secrets = [
+    "GITHUB_TOKEN",
+    "TODO_ACTIONS_FIREBASE_SERVICE_ACCOUNT",
+  ]
 }
 
 workflow "Test" {
