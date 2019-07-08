@@ -32,6 +32,9 @@ require('yargs')
 
     const todosWithoutReference = todoComments.filter(todo => !todo.reference)
     log.info('TODOs without references: %s', todosWithoutReference.length)
+
+    // TODO: Stop if not default branch.
+
     if (todosWithoutReference.length > 0) {
       for (const todo of todosWithoutReference) {
         todo.reference = `$${require('bson-objectid').default.generate()}`
