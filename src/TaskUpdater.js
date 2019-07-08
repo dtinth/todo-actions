@@ -11,15 +11,15 @@ exports.updateTasks = async function updateTasks(todos) {
     const unresolved = reference.startsWith('$')
     if (unresolved) {
       const todoUniqueKey = reference.substr(1)
-      // TODO: Acquire a lock for TODO’s key.
-      // TODO: Create an issue.
-      // TODO: Associate the issue reference (resolution) to the TODO’s unique key.
-      // TODO: Update the TODO reference to the resolved key.
+      // TODO [$5d239d6f029ffa0007ca8a06]: Acquire a lock for TODO’s key.
+      // TODO [$5d239d6f029ffa0007ca8a07]: Create an issue.
+      // TODO [$5d239d6f029ffa0007ca8a08]: Associate the issue reference (resolution) to the TODO’s unique key.
+      // TODO [$5d239d6f029ffa0007ca8a09]: Update the TODO reference to the resolved key.
     } else {
-      // TODO: Generate the issue text.
-      // TODO: Update the issue if changed.
+      // TODO [$5d239d6f029ffa0007ca8a0a]: Generate the issue text.
+      // TODO [$5d239d6f029ffa0007ca8a0b]: Update the issue if changed.
     }
   }
 
-  // TODO: Create a commit if some todos have been resolved to issue.
+  // TODO [$5d239d6f029ffa0007ca8a0c]: Create a commit if some todos have been resolved to issue.
 }
