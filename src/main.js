@@ -1,13 +1,14 @@
 const { File } = require('./File')
 const { parseTodos } = require('./TodoParser')
 const { logger } = require('./Logging')
+const childProcess = require('child_process')
 
 const log = logger('main')
 
 require('yargs')
   .command('$0', 'Collect TODOs and create issues', {}, async args => {
     log.info('Search for files with TODO tags...')
-    const filesWithTodoMarker = require('child_process')
+    const filesWithTodoMarker = childProcess
       .execSync('git grep -Il TODO:', { encoding: 'utf8' })
       .split('\n')
       .filter(name => name)
@@ -40,11 +41,11 @@ require('yargs')
       for (const file of changedFiles) {
         file.save()
       }
-      require('child_process').execFileSync('git', [
+      childProcess.execFileSync('git', [
         'add',
         ...changedFiles.map(file => file.fileName),
       ])
-      require('child_process').execFileSync(
+      childProcess.execFileSync(
         'git',
         ['commit', '-m', 'Collect TODO comments'],
         { stdio: 'inherit' },
@@ -52,11 +53,13 @@ require('yargs')
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
-      require('child_process').execSync(
+      childProcess.execSync(
         'git push origin $(git rev-parse --abbrev-ref HEAD)',
         { stdio: 'inherit' },
       )
     }
+
+    process.exit(0)
   })
   .strict()
   .demandCommand()
