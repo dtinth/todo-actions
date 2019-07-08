@@ -2,6 +2,7 @@ const { File } = require('./File')
 const { parseTodos } = require('./TodoParser')
 const { logger } = require('./Logging')
 const childProcess = require('child_process')
+const invariant = require('invariant')
 
 const log = logger('main')
 
@@ -59,6 +60,16 @@ require('yargs')
       childProcess.execSync(
         'git push origin $(git rev-parse --abbrev-ref HEAD)',
         { stdio: 'inherit' },
+      )
+    }
+
+    // Every TODO must have a reference by now.
+    for (const todo of todoComments) {
+      invariant(
+        todo.reference,
+        'TODO "%s" at %s must have a reference by now!',
+        todo.title,
+        todo.file.fileName,
       )
     }
 
