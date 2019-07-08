@@ -75,4 +75,19 @@ describe('parseTodos', () => {
       'https://github.com/dtinth/todo-actions/issues/1',
     )
   })
+
+  it('allows title on the next line', () => {
+    const file = new MockFile(
+      'main.js',
+      `
+        // ${MARKER}:
+        // Title
+        // Body
+      `,
+    )
+    const result = parseTodos(file)
+    expect(result).toHaveLength(1)
+    expect(result[0].file).toBe(file)
+    expect(result[0].title).toBe('Title')
+  })
 })

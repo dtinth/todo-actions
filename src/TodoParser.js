@@ -22,6 +22,16 @@ exports.parseTodos = function(file) {
       currentTodo = todo
       out.push(todo)
     } else if (currentTodo) {
+      const beforePrefix = line.substr(0, currentTodo.prefix.length)
+      const afterPrefix = line.substr(currentTodo.prefix.length)
+      if (
+        beforePrefix.trimRight() === currentTodo.prefix.trimRight() &&
+        (!afterPrefix || beforePrefix.match(/\s$/))
+      ) {
+        currentTodo.handleLine(afterPrefix)
+      } else {
+        currentTodo = undefined
+      }
     }
   }
   return out
@@ -55,6 +65,15 @@ class Todo {
       this.line,
       `${this.prefix}TODO${newRef ? ` [${newRef}]` : ''}:${this.suffix}`,
     )
+  }
+
+  /**
+   * @param {string} line
+   */
+  handleLine(line) {
+    if (!this.title) {
+      this.title = line
+    }
   }
 }
 
