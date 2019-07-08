@@ -1,17 +1,4 @@
 /**
- * @typedef {object} IFile
- * A representation of a file being processed,
- * with mutable contents.
- *
- * @prop {string} fileName
- *
- * @prop {FileContents} contents
- *
- * @prop {() => void} save
- *  Saves the file back into the file system.
- */
-
-/**
  * A file from file system.
  */
 exports.File = class File {
@@ -61,6 +48,8 @@ class FileContents {
    * @param {string} contents
    */
   constructor(contents) {
+    ensureFileContentsInterface(this)
+
     /**
      * @private
      */
@@ -69,17 +58,11 @@ class FileContents {
     this.changed = false
   }
 
-  /**
-   * File contents as array of lines.
-   * The newline character has been stripped.
-   * May be mutated to change the contents of the file.
-   */
   get lines() {
     return /** @type {ReadonlyArray<string>} */ (this._lines)
   }
 
   /**
-   * Change a line
    * @param {number} lineIndex
    * @param {string} newLineContents
    */
@@ -100,3 +83,9 @@ exports.FileContents = FileContents
  * @param {IFile} file
  */
 function ensureFileInterface(file) {}
+
+/**
+ * For type checking.
+ * @param {IFileContents} contents
+ */
+function ensureFileContentsInterface(contents) {}

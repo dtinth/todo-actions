@@ -1,0 +1,35 @@
+/**
+ * A representation of a file being processed,
+ * with mutable contents.
+ */
+interface IFile {
+  fileName: string
+  contents: IFileContents
+  /**
+   * Saves the file back into the file system.
+   */
+  save(): void
+}
+
+interface IFileContents {
+  changed: boolean
+
+  /**
+   * File contents as array of lines.
+   * The newline character has been stripped.
+   * May be mutated to change the contents of the file.
+   */
+  lines: ReadonlyArray<string>
+
+  /**
+   * Change a line
+   */
+  changeLine(lineIndex: number, newLineContents: string): void
+}
+
+interface ITodo {
+  file: IFile
+  reference: string | null
+  title: string
+  body: string
+}

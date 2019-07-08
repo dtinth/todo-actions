@@ -1,13 +1,5 @@
 /**
- * @typedef {object} ITodo
- * @prop {import('./File').IFile} file
- * @prop {string | null} reference
- * @prop {string} title
- * @prop {string} body
- */
-
-/**
- * @param {import('./File').IFile} file
+ * @param {IFile} file
  * @returns {ITodo[]}
  */
 exports.parseTodos = function(file) {
