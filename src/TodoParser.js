@@ -3,6 +3,7 @@
  * @prop {import('./File').IFile} file
  * @prop {string | null} reference
  * @prop {string} title
+ * @prop {string} body
  */
 
 /**
@@ -53,6 +54,7 @@ class Todo {
     this.currentReference = reference
     this.suffix = suffix
     this.title = suffix.trim()
+    this.body = ''
   }
 
   /** @returns {string | null} */
@@ -73,6 +75,8 @@ class Todo {
   handleLine(line) {
     if (!this.title) {
       this.title = line
+    } else if (this.body || line) {
+      this.body += (this.body ? '\n' : '') + line
     }
   }
 }
