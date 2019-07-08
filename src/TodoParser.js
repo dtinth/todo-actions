@@ -10,35 +10,56 @@
  * @returns {ITodo[]}
  */
 exports.parseTodos = function(file) {
-  /** @type {ITodo[]} */
+  /** @type {Todo[]} */
   const out = []
+
+  /** @type {Todo | undefined} */
+  let currentTodo
   for (const [lineIndex, line] of file.contents.lines.entries()) {
     const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:(.*)/)
     if (match) {
-      const prefix = match[1]
-      const suffix = match[3]
-      const startIndex = lineIndex
-      let _reference = match[2] || null
-
-      /** @type {ITodo} */
-      const todo = {
-        file,
-        // TODO [$5d21c7a2b86bd10007ba06a9]:
-        // Parse title that sits on the next line.
-        title: (match[3] || '').trim(),
-        get reference() {
-          return _reference
-        },
-        set reference(newRef) {
-          _reference = newRef
-          file.contents.changeLine(
-            startIndex,
-            `${prefix}TODO${newRef ? ` [${newRef}]` : ''}:${suffix}`,
-          )
-        },
-      }
+      const todo = new Todo(file, lineIndex, match[1], match[2], match[3])
+      currentTodo = todo
       out.push(todo)
+    } else if (currentTodo) {
     }
   }
   return out
 }
+
+class Todo {
+  /**
+   * @param {import('./File').IFile} file
+   * @param {number} line
+   * @param {string} prefix
+   * @param {string | null} reference
+   * @param {string} suffix
+   */
+  constructor(file, line, prefix, reference, suffix) {
+    ensureTodoInterface(this)
+    this.file = file
+    this.line = line
+    this.prefix = prefix
+    this.currentReference = reference
+    this.suffix = suffix
+    this.title = suffix.trim()
+  }
+
+  /** @returns {string | null} */
+  get reference() {
+    return this.currentReference
+  }
+  set reference(newRef) {
+    this.currentReference = newRef
+    this.file.contents.changeLine(
+      this.line,
+      `${this.prefix}TODO${newRef ? ` [${newRef}]` : ''}:${this.suffix}`,
+    )
+  }
+}
+
+/**
+ * For type checking.
+ * @param {ITodo} todo
+ */
+function ensureTodoInterface(todo) {}
