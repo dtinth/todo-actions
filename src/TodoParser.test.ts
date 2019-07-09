@@ -1,5 +1,5 @@
-const { parseTodos } = require('./TodoParser')
-const { MockFile } = require('./File')
+import { parseTodos } from './TodoParser'
+import { MockFile } from './File'
 
 const MARKER = 'TODO'
 

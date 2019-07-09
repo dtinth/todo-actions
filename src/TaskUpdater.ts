@@ -1,9 +1,6 @@
-const invariant = require('invariant')
+import { invariant } from 'tkt'
 
-/**
- * @param {ITodo[]} todos
- */
-exports.updateTasks = async function updateTasks(todos) {
+exports.updateTasks = async function updateTasks(todos: ITodo[]) {
   for (const todo of todos) {
     const reference =
       todo.reference ||

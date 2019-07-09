@@ -1,16 +1,16 @@
-const { File } = require('./File')
-const { parseTodos } = require('./TodoParser')
-const { logger } = require('./Logging')
-const childProcess = require('child_process')
-const invariant = require('invariant')
+import { File } from './File'
+import { parseTodos } from './TodoParser'
+import { logger, cli, invariant } from 'tkt'
+import { execSync, execFileSync } from 'child_process'
 
 const log = logger('main')
 
-require('yargs')
+cli()
   .command('$0', 'Collect TODOs and create issues', {}, async args => {
     log.info('Search for files with TODO tags...')
-    const filesWithTodoMarker = childProcess
-      .execSync('git grep -Il TODO:', { encoding: 'utf8' })
+    const filesWithTodoMarker = execSync('git grep -Il TODO:', {
+      encoding: 'utf8',
+    })
       .split('\n')
       .filter(name => name)
 
@@ -45,22 +45,16 @@ require('yargs')
       for (const file of changedFiles) {
         file.save()
       }
-      childProcess.execFileSync('git', [
-        'add',
-        ...changedFiles.map(file => file.fileName),
-      ])
-      childProcess.execFileSync(
-        'git',
-        ['commit', '-m', 'Collect TODO comments'],
-        { stdio: 'inherit' },
-      )
+      execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
+      execFileSync('git', ['commit', '-m', 'Collect TODO comments'], {
+        stdio: 'inherit',
+      })
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
-      childProcess.execSync(
-        'git push origin $(git rev-parse --abbrev-ref HEAD)',
-        { stdio: 'inherit' },
-      )
+      execSync('git push origin $(git rev-parse --abbrev-ref HEAD)', {
+        stdio: 'inherit',
+      })
     }
 
     // Every TODO must have a reference by now.
@@ -75,7 +69,4 @@ require('yargs')
 
     process.exit(0)
   })
-  .strict()
-  .demandCommand()
-  .help()
   .parse()

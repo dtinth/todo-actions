@@ -1,13 +1,7 @@
-/**
- * @param {IFile} file
- * @returns {ITodo[]}
- */
-exports.parseTodos = function(file) {
-  /** @type {Todo[]} */
-  const out = []
+export function parseTodos(file: IFile): ITodo[] {
+  const out: Todo[] = []
 
-  /** @type {Todo | undefined} */
-  let currentTodo
+  let currentTodo: Todo | undefined
   for (const [lineIndex, line] of file.contents.lines.entries()) {
     const match = line.match(/^(\W+\s)TODO(?: \[([^\]\s]+)\])?:(.*)/)
     if (match) {
@@ -30,17 +24,22 @@ exports.parseTodos = function(file) {
   return out
 }
 
-class Todo {
-  /**
-   * @param {import('./File').IFile} file
-   * @param {number} line
-   * @param {string} prefix
-   * @param {string | null} reference
-   * @param {string} suffix
-   */
-  constructor(file, line, prefix, reference, suffix) {
-    ensureTodoInterface(this)
-    this.file = file
+class Todo implements ITodo {
+  prefix: string
+  line: number
+  suffix: string
+  body: string
+  title: string
+
+  private currentReference: string | null
+
+  constructor(
+    public file: IFile,
+    line: number,
+    prefix: string,
+    reference: string | null,
+    suffix: string,
+  ) {
     this.line = line
     this.prefix = prefix
     this.currentReference = reference
@@ -49,8 +48,7 @@ class Todo {
     this.body = ''
   }
 
-  /** @returns {string | null} */
-  get reference() {
+  get reference(): string | null {
     return this.currentReference
   }
   set reference(newRef) {
@@ -61,10 +59,7 @@ class Todo {
     )
   }
 
-  /**
-   * @param {string} line
-   */
-  handleLine(line) {
+  handleLine(line: string) {
     if (!this.title) {
       this.title = line
     } else if (this.body || line) {
@@ -72,9 +67,3 @@ class Todo {
     }
   }
 }
-
-/**
- * For type checking.
- * @param {ITodo} todo
- */
-function ensureTodoInterface(todo) {}
