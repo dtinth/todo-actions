@@ -1,6 +1,11 @@
-import { invariant } from 'tkt'
+import { invariant, logger } from 'tkt'
 import { ITodo } from './types'
-import { getMongoClient } from './MongoDB'
+import { getMongoDb } from './MongoDB'
+import { repoContext } from './RepoContext'
+import { ObjectId } from 'bson'
+import { currentProcessId } from './ProcessId'
+
+const log = logger('TaskUpdater')
 
 export async function updateTasks(todos: ITodo[]) {
   for (const todo of todos) {
@@ -10,37 +15,112 @@ export async function updateTasks(todos: ITodo[]) {
     const unresolved = reference.startsWith('$')
     if (unresolved) {
       const todoUniqueKey = reference.substr(1)
-      const task = resolveTask(todoUniqueKey)
+      const taskIdentifier = await resolveTask(todoUniqueKey, todo)
+      todo.reference = taskIdentifier
     } else {
-      // TODO [$5d239d6f029ffa0007ca8a0a]: Generate the issue text.
-      // TODO [$5d239d6f029ffa0007ca8a0b]: Update the issue if changed.
+      // TODO [$5d239d6f029ffa0007ca8a0a]: Generate the task body.
+      // TODO [$5d239d6f029ffa0007ca8a0b]: Update the task body if changed.
     }
   }
 
-  // TODO [$5d239d6f029ffa0007ca8a0c]: Create a commit if some todos have been resolved to issue.
+  // TODO [$5d239d6f029ffa0007ca8a0c]: Create a commit if some todos have been resolved to task.
+  // TODO [$5d2db627d61e282ce803530e]: Complete tasks whose TODO comments are no longer present.
 }
 
-export async function resolveTask() {
-  const tasks = await getTasksCollection()
+export async function resolveTask(
+  todoUniqueKey: string,
+  todo: ITodo,
+): Promise<string> {
+  const db = await getMongoDb()
+
+  const _id = ObjectId.createFromHexString(todoUniqueKey)
+
+  // Ensure a task exists.
+  const task = await db.tasks.findOneAndUpdate(
+    { _id: _id },
+    {
+      $setOnInsert: {
+        _id: _id,
+        projectId: repoContext.repositoryNodeId,
+        taskIdentifier: null,
+        createdAt: new Date(),
+        ownerProcessId: null,
+        ownerProcessTimestamp: null,
+      },
+    },
+    { upsert: true, returnOriginal: false },
+  )
+  if (!task.value) {
+    throw new Error('Failed to upsert a task.')
+  }
+  if (task.value.taskIdentifier) {
+    return task.value.taskIdentifier
+  }
+
+  // Acquire a lock...
+  const lockedTask = await db.tasks.findOneAndUpdate(
+    {
+      _id: _id,
+      $or: [
+        { ownerProcessTimestamp: null },
+        { ownerProcessTimestamp: { $lt: new Date(Date.now() - 60e3) } },
+      ],
+    },
+    {
+      $set: {
+        ownerProcessId: currentProcessId,
+        ownerProcessTimestamp: new Date(),
+      },
+    },
+    { returnOriginal: false },
+  )
+  if (!lockedTask.value) {
+    throw new Error('Failed to acquire a lock for this task.')
+  }
+
+  // Obtain a task identifier
+  const taskIdentifier = await createTask(todo)
+
+  // Associate
+  await db.tasks.findOneAndUpdate(
+    { _id: _id },
+    { $set: { taskIdentifier: taskIdentifier } },
+  )
+
+  return taskIdentifier
 }
 
-async function getTasksCollection() {
-  const client = await getMongoClient()
-  const tasks = client.db().collection<{
-    /**
-     * String identifying the project.
-     * This should be stable, i.e. does not change even though project is renamed.
-     */
-    projectId: string
-
-    /**
-     * The unique reference key for the TODO item.
-     */
-    uniqueKey: string
-  }>('tasks')
-  await tasks.createIndex({ projectId: 1, uniqueKey: 1 }, { unique: true })
-  // TODO [$5d239d6f029ffa0007ca8a06]: Acquire a lock for TODO’s key.
-  // TODO [$5d239d6f029ffa0007ca8a07]: Create an issue.
-  // TODO [$5d239d6f029ffa0007ca8a08]: Associate the issue reference (resolution) to the TODO’s unique key.
-  // TODO [$5d239d6f029ffa0007ca8a09]: Update the TODO reference to the resolved key.
+async function createTask(todo: ITodo): Promise<string> {
+  const graphql = require('@octokit/graphql').defaults({
+    headers: {
+      authorization: `token ${process.env.GITHUB_TOKEN ||
+        invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+    },
+  })
+  const result = await graphql(
+    `
+      mutation CreateIssue($input: CreateIssueInput!) {
+        createIssue(input: $input) {
+          issue {
+            number
+          }
+        }
+      }
+    `,
+    {
+      input: {
+        repositoryId: repoContext.repositoryNodeId,
+        title: todo.title,
+        // TODO [$5d2db627d61e282ce803530f]: Properly generate the initial issue body.
+        body: todo.body,
+      },
+    },
+  )
+  log.debug('Result:', result)
+  return result.createIssue.issue.number
+    ? `#${result.createIssue.issue.number}`
+    : invariant(
+        false,
+        'Failed to get issue number out of createIssue API call.',
+      )
 }
