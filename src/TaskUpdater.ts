@@ -4,6 +4,7 @@ import { getMongoDb } from './MongoDB'
 import { repoContext } from './CodeRepository'
 import { ObjectId } from 'bson'
 import { currentProcessId } from './ProcessId'
+import { createTask } from './TaskManagementSystem'
 
 const log = logger('TaskUpdater')
 
@@ -104,39 +105,4 @@ export async function resolveTask(
   )
 
   return taskIdentifier
-}
-
-async function createTask(todo: ITodo): Promise<string> {
-  const graphql = require('@octokit/graphql').defaults({
-    headers: {
-      authorization: `token ${process.env.GITHUB_TOKEN ||
-        invariant(false, 'Required GITHUB_TOKEN variable.')}`,
-    },
-  })
-  const result = await graphql(
-    `
-      mutation CreateIssue($input: CreateIssueInput!) {
-        createIssue(input: $input) {
-          issue {
-            number
-          }
-        }
-      }
-    `,
-    {
-      input: {
-        repositoryId: repoContext.repositoryNodeId,
-        title: todo.title,
-        // TODO [#8]: Properly generate the initial issue body.
-        body: todo.body,
-      },
-    },
-  )
-  log.debug('Result:', result)
-  return result.createIssue.issue.number
-    ? `#${result.createIssue.issue.number}`
-    : invariant(
-        false,
-        'Failed to get issue number out of createIssue API call.',
-      )
 }

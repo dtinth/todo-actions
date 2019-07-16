@@ -14,6 +14,7 @@ export async function runMain() {
   log.info('TODOs without references: %s', todosWithoutReference.length)
 
   // TODO [#2]: Stop if not default branch.
+
   if (todosWithoutReference.length > 0) {
     for (const todo of todosWithoutReference) {
       todo.reference = `$${new ObjectId().toHexString()}`
