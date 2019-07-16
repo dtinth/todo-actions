@@ -4,6 +4,7 @@ import { ITodo } from './types'
 import * as CodeRepository from './CodeRepository'
 import * as TaskManagementSystem from './TaskManagementSystem'
 import * as DataStore from './DataStore'
+import * as TaskInformationGenerator from './TaskInformationGenerator'
 
 const log = logger('TaskUpdater')
 
@@ -46,9 +47,15 @@ export async function reconcileTasks(todos: ITodo[]) {
       )
       continue
     }
-    // TODO [#25]: Check if the task state changed.
-    // TODO [#26]: Generate the task body.
-    // TODO [#27]: Update the task body if changed.
+    const {
+      title,
+      body,
+      state,
+    } = TaskInformationGenerator.generateTaskInformationFromTodo(todo)
+    if (task.state.hash !== state.hash) {
+      await TaskManagementSystem.updateTask(reference, { title, body })
+      await task.updateState(state)
+    }
   }
 
   for (const task of uncompletedTasks) {
