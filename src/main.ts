@@ -9,7 +9,7 @@ const log = logger('main')
 cli()
   .command('$0', 'Collect TODOs and create issues', {}, async args => {
     log.info('Search for files with TODO tags...')
-    const filesWithTodoMarker = execSync('git grep -Il TODO:', {
+    const filesWithTodoMarker = execSync('git grep -Il TODO', {
       encoding: 'utf8',
     })
       .split('\n')
