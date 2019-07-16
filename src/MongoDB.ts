@@ -65,7 +65,7 @@ export async function getMongoDb() {
     const db = client.db()
     const tasks = db.collection<TaskSchema>('tasks')
 
-    // TODO [#9]: Add index to ensure that [repositoryId, taskReference] is unique and can be queried quickly.
+    // TODO: Add index to ensure that [repositoryId, taskReference] is unique and can be queried quickly.
 
     return {
       client,

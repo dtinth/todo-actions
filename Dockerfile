@@ -15,7 +15,7 @@ ENV EMAIL=todo-collector[bot]@users.noreply.github.com
 
 RUN mkdir -p /app
 ADD entrypoint.sh package.json yarn.lock /app/
-# TODO [#11]: Pre-compile
+# TODO: Pre-compile
 RUN cd /app && yarn --frozen-lockfile
 ADD src /app/src
 ENTRYPOINT ["/app/entrypoint.sh"]

@@ -17,7 +17,7 @@ export async function runMain() {
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
 
-  // TODO [#19]: Stop if not default branch.
+  // TODO: Stop if not default branch.
 
   if (todosWithoutReference.length > 0) {
     for (const todo of todosWithoutReference) {

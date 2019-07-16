@@ -42,12 +42,12 @@ export async function reconcileTasks(todos: ITodo[]) {
       )
       continue
     }
-    // TODO [#15]: Check if the task state changed.
-    // TODO [#16]: Generate the task body.
-    // TODO [#17]: Update the task body if changed.
+    // TODO: Check if the task state changed.
+    // TODO: Generate the task body.
+    // TODO: Update the task body if changed.
   }
 
-  // TODO [#18]: Complete tasks whose TODO comments are no longer present.
+  // TODO: Complete tasks whose TODO comments are no longer present.
 }
 
 export async function resolveTask(
