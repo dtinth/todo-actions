@@ -42,7 +42,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   const files: IFile[] = []
   log.info('Parsing TODO tags...')
   for (const filePath of filesWithTodoMarker) {
-    // TODO [$5d2df603d0b2e6000740724a]: Implement ignoring paths
+    // TODO [#13]: Implement ignoring paths
     if (filePath === 'README.md') continue
     const file = new File(filePath)
     const todos = TodoParser.parseTodos(file)
