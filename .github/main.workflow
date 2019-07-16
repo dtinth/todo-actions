@@ -12,11 +12,11 @@ action "Collect TODO" {
 }
 
 workflow "Test" {
-  on = "push"
   resolves = [
     "test",
     "typecheck",
   ]
+  on = "push"
 }
 
 action "yarn install" {
