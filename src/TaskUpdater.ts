@@ -35,6 +35,13 @@ export async function reconcileTasks(todos: ITodo[]) {
       'Expected all TODO comments to be associated by now.',
     )
     const task = allOpenTasks.find(t => t.taskReference === reference)
+    if (!task) {
+      log.warn(
+        'Cannot find a matching task for TODO comment with reference "%s"',
+        reference,
+      )
+      continue
+    }
     // TODO: Check if the task state changed.
     // TODO [#5]: Generate the task body.
     // TODO [#6]: Update the task body if changed.
