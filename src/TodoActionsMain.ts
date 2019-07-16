@@ -1,31 +1,15 @@
-import { File } from './File'
-import { parseTodos } from './TodoParser'
 import { invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
 import { updateTasks } from './TaskUpdater'
 import { logger } from 'tkt'
+import { scanCodeRepository } from './CodeRepository'
+import { IFile } from './types'
 
 const log = logger('main')
 
 export async function runMain() {
   log.info('Search for files with TODO tags...')
-  const filesWithTodoMarker = execSync('git grep -Il TODO', {
-    encoding: 'utf8',
-  })
-    .split('\n')
-    .filter(name => name)
-  const todoComments = []
-  const files = []
-  log.info('Parsing TODO tags...')
-  for (const filePath of filesWithTodoMarker) {
-    // TODO [#1]: Implement ignoring paths
-    if (filePath === 'README.md') continue
-    const file = new File(filePath)
-    const todos = parseTodos(file)
-    log.info('%s: %s found', filePath, todos.length)
-    todoComments.push(...todos)
-    files.push(file)
-  }
+  const { todoComments, files } = await scanCodeRepository()
   log.info('Total TODOs found: %s', todoComments.length)
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
@@ -49,7 +33,8 @@ export async function runMain() {
   await updateTasks(todoComments)
   await saveChanges(files, 'Update TODO references')
 }
-function saveChanges(files: File[], commitMessage: string) {
+
+function saveChanges(files: IFile[], commitMessage: string) {
   const changedFiles = files.filter(file => file.contents.changed)
   log.info('Files changed: %s', changedFiles.length)
   if (changedFiles.length === 0) {
