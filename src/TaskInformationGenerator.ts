@@ -24,7 +24,11 @@ export function generateTaskInformationFromTodo(todo: ITodo): TaskInformation {
     todo.body,
     '',
     '---',
-    `_This issue has been automatically created by [todo-actions](https://github.com/apps/todo-actions) based on a TODO comment found in ${link}_`,
+    `_` +
+      `This issue has been automatically created by [todo-actions](https://github.com/apps/todo-actions) based on a TODO comment found in ${link}. ` +
+      // TODO: Don’t hardcode master branch in task description
+      `It will automatically be closed when the TODO comment is removed from the master branch.` +
+      `_`,
   ].join('\n')
 
   return {
