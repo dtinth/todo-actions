@@ -28,7 +28,7 @@ export async function beginTaskResolution(
     {
       $setOnInsert: {
         _id: _id,
-        projectId: repositoryId,
+        repositoryId: repositoryId,
         taskIdentifier: null,
         createdAt: new Date(),
         ownerProcessId: null,
