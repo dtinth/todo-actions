@@ -53,8 +53,20 @@ export async function reconcileTasks(todos: ITodo[]) {
       state,
     } = TaskInformationGenerator.generateTaskInformationFromTodo(todo)
     if (task.state.hash !== state.hash) {
+      log.info(
+        'Hash for "%s" changed: "%s" => "%s" -- must update task.',
+        reference,
+        task.state.hash,
+        state.hash,
+      )
       await TaskManagementSystem.updateTask(reference, { title, body })
       await task.updateState(state)
+    } else {
+      log.info(
+        'Hash for "%s" remains unchanged: "%s".',
+        reference,
+        task.state.hash,
+      )
     }
   }
 
