@@ -11,7 +11,7 @@ LABEL "maintainer"="dtinth <dtinth@spacet.me>"
 
 ENV GIT_COMMITTER_NAME=TODO
 ENV GIT_AUTHOR_NAME=TODO
-ENV EMAIL=todo-collector[bot]@users.noreply.github.com
+ENV EMAIL=todo-actions[bot]@users.noreply.github.com
 
 RUN mkdir -p /app
 ADD entrypoint.sh package.json yarn.lock /app/
