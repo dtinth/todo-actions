@@ -1,8 +1,56 @@
 # todo-actions
 
-Turn TODO in source code into issues and close them when they are gone. Runs on GitHub Actions. This project is hugely inspired by [0pdd](https://www.yegor256.com/2017/04/05/pdd-in-action.html).
+Turn TODO comments inside source code into GitHub issues and closes them when they are gone. Runs on GitHub Actions. This project is hugely inspired by [0pdd](https://www.yegor256.com/2017/04/05/pdd-in-action.html).
 
-## Glossary
+## Features
+
+- Turns TODO comments into GitHub issues.
+
+  A TODO comment looks like this:
+
+  ```js
+  // TODO: Add integration test for TodoActionsMain.
+  //
+  // Code that interface with external data have been separated into their own modules.
+  // These includes:
+  //
+  // - `DataStore`
+  // - `CodeRepository`
+  // - `TaskManagementSystem`
+  //
+  // They can be mocked by creating a mock version using `__mocks__` folder.
+  // https://jestjs.io/docs/en/manual-mocks
+  ```
+
+  …and it gets turned into an issue like this:
+
+  <img src="./docs/images/issue.png" width="782" alt="Screenshot" />
+
+  The first line is the title. The rest becomes the issue body.
+
+- The GitHub issue is updated whenever the text inside the TODO comment changes.
+  This allows elaboration and collaboration on TODO comments.
+
+- Once the TODO comment is removed, the corresponding issue is automatically closed.
+  This allows fine-grained task management, and also allows new contributors to easily contribute to the code base.
+
+  <img src="./docs/images/pulse.png" width="740" alt="Screenshot" />
+
+  As a case study, when we [used](https://wonderful.software/elect-live/pdd/) the [0pdd](./docs/images/elect-live-example.png) tool on [codeforthailand/election-live](https://github.com/codeforthailand/election-live) project, it helped us attract 20+ contributors and visualized the work that got done in just 7 days:
+
+  <img src="./docs/images/elect-live-pdd.png" width="740" alt="Screenshot" />
+
+## Usage
+
+Stay tuned!
+
+## Development
+
+### Glossary
+
+This tool is designed to be task management system-agnostic.
+That is, in the future it may be used with tools other than GitHub issues.
+Therefore, inside the code base, instead of “issues,” `todo-actions` calls them tasks.
 
 - **TODO comment:** A TODO comment inside the source code.
   It begins with a _TODO marker_, and followed by a block of text whose first line is the title and the rest is the body.
@@ -39,7 +87,7 @@ Turn TODO in source code into issues and close them when they are gone. Runs on 
 
   - **To complete a task** means “to close an issue,” “to move a card to done,” or “to mark as completed/resolved,” depending on the task management system you use.
 
-## Implementation overview
+### Implementation overview
 
 1. A `push` event causes the action to run in GitHub Actions. If the current branch is master, it continues. Otherwise, it is aborted.
 
