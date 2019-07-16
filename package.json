@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "jest",
-    "dev": "ts-node -r dotenv/config src/main.ts"
+    "dev": "ts-node -r dotenv/config src/CLIEntrypoint.ts"
   },
   "dependencies": {
     "@octokit/graphql": "^3.0.1",

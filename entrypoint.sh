@@ -6,4 +6,4 @@
 # sh -c "node /app/lib/main.js $*"
 # ```
 #
-sh -c "/app/node_modules/.bin/ts-node /app/src/main.ts $*"
+sh -c "/app/node_modules/.bin/ts-node /app/src/CLIEntrypoint.ts $*"
