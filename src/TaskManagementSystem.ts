@@ -26,7 +26,7 @@ export async function createTask(todo: ITodo): Promise<string> {
       input: {
         repositoryId: CodeRepository.repoContext.repositoryNodeId,
         title: todo.title,
-        // TODO [$5d2df8e318b02500076c073f]: Properly generate the initial issue body.
+        // TODO [#24]: Properly generate the initial issue body.
         body: todo.body,
       },
     },
