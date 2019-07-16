@@ -8,10 +8,10 @@ type TaskSchema = {
   _id: ObjectId
 
   /**
-   * String identifying the project.
+   * String identifying the repository.
    * This should be stable, i.e. does not change even though project is renamed.
    */
-  projectId: string
+  repositoryId: string
 
   /**
    * The identifier of the associated task.

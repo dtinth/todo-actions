@@ -1,10 +1,8 @@
 import { invariant, logger } from 'tkt'
 import { ITodo } from './types'
-import { getMongoDb } from './MongoDB'
 import { repoContext } from './CodeRepository'
-import { ObjectId } from 'bson'
-import { currentProcessId } from './ProcessId'
 import { createTask } from './TaskManagementSystem'
+import { beginTaskResolution } from './DataStore'
 
 const log = logger('TaskUpdater')
 
@@ -33,76 +31,17 @@ export async function resolveTask(
   todoUniqueKey: string,
   todo: ITodo,
 ): Promise<string> {
-  const db = await getMongoDb()
-  const _id = ObjectId.createFromHexString(todoUniqueKey)
-
-  // Ensure a task exists.
-  const task = await db.tasks.findOneAndUpdate(
-    { _id: _id },
-    {
-      $setOnInsert: {
-        _id: _id,
-        projectId: repoContext.repositoryNodeId,
-        taskIdentifier: null,
-        createdAt: new Date(),
-        ownerProcessId: null,
-        ownerProcessTimestamp: null,
-      },
-    },
-    { upsert: true, returnOriginal: false },
-  )
-  if (!task.value) {
-    throw new Error('Failed to upsert a task.')
-  }
-  if (task.value.taskIdentifier) {
-    log.debug(
-      'Found already-existing identifier %s for TODO %s.',
-      task.value.taskIdentifier,
-      todoUniqueKey,
-    )
-    return task.value.taskIdentifier
-  }
-
-  // Acquire a lock...
-  log.debug(
-    'Acquiring lock for TODO %s (currentProcessId=%s).',
+  const resolution = await beginTaskResolution(
     todoUniqueKey,
-    currentProcessId,
+    repoContext.repositoryNodeId,
+    todo,
   )
-  const lockedTask = await db.tasks.findOneAndUpdate(
-    {
-      _id: _id,
-      $or: [
-        { ownerProcessTimestamp: null },
-        { ownerProcessTimestamp: { $lt: new Date(Date.now() - 60e3) } },
-      ],
-    },
-    {
-      $set: {
-        ownerProcessId: currentProcessId,
-        ownerProcessTimestamp: new Date(),
-      },
-    },
-    { returnOriginal: false },
-  )
-  if (!lockedTask.value) {
-    throw new Error('Failed to acquire a lock for this task.')
+  if ('existingTaskIdentifier' in resolution) {
+    return resolution.existingTaskIdentifier
   }
-
-  // Obtain a task identifier
+  const taskCreationLock = await resolution.acquireTaskCreationLock()
   log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey)
   const taskIdentifier = await createTask(todo)
-
-  // Associate
-  log.debug(
-    'Created task %s for TODO %s. Saving changes.',
-    taskIdentifier,
-    todoUniqueKey,
-  )
-  await db.tasks.findOneAndUpdate(
-    { _id: _id },
-    { $set: { taskIdentifier: taskIdentifier } },
-  )
-
+  taskCreationLock.finish(taskIdentifier)
   return taskIdentifier
 }
