@@ -24,7 +24,7 @@ Turn TODO comments inside source code into GitHub issues and closes them when th
 
   …and it gets turned into an issue like this:
 
-  <img src="./docs/images/issue.png" width="782" alt="Screenshot" />
+  > [<img src="./docs/images/issue.png" width="782" alt="Screenshot" />](https://github.com/dtinth/todo-actions/issues/35)
 
   The first line is the title. The rest becomes the issue body.
 
@@ -34,11 +34,11 @@ Turn TODO comments inside source code into GitHub issues and closes them when th
 - Once the TODO comment is removed, the corresponding issue is automatically closed.
   This allows fine-grained task management, and also allows new contributors to easily contribute to the code base.
 
-  <img src="./docs/images/pulse.png" width="740" alt="Screenshot" />
+  > <img src="./docs/images/pulse.png" width="740" alt="Screenshot" />
 
   As a case study, when we [used](https://wonderful.software/elect-live/pdd/) the [0pdd](./docs/images/elect-live-example.png) tool on [codeforthailand/election-live](https://github.com/codeforthailand/election-live) project, it helped us attract 20+ contributors and visualized the work that got done in just 7 days:
 
-  <img src="./docs/images/elect-live-pdd.png" width="740" alt="Screenshot" />
+  > <img src="./docs/images/elect-live-pdd.png" width="740" alt="Screenshot" />
 
 ## Usage
 
