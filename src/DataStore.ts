@@ -99,6 +99,7 @@ type Task = {
   taskReference: string
   state: ITaskState
   markAsCompleted(): Promise<void>
+  updateState(newState: ITaskState): Promise<void>
 }
 
 export async function findAllUncompletedTasks(
@@ -125,6 +126,12 @@ export async function findAllUncompletedTasks(
         await db.tasks.findOneAndUpdate(
           { _id: taskData._id },
           { $set: { completed: true } },
+        )
+      },
+      async updateState(newState) {
+        await db.tasks.findOneAndUpdate(
+          { _id: taskData._id },
+          { $set: { hash: newState.hash } },
         )
       },
     } as Task
