@@ -38,9 +38,7 @@ export const repoContext = {
     ),
   defaultBranch:
     process.env.GITHUB_REPO_DEFAULT_BRANCH ||
-    (event &&
-      event.repository &&
-      event.repository.default_branch.split('/')[1]) ||
+    (event && event.repository && event.repository.default_branch) ||
     invariant(
       false,
       'GitHub Repo Default Branch not found, either in GitHub Action event payload and GITHUB_REPO_DEFAULT_BRANCH environment variable.',
