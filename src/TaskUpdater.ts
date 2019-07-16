@@ -1,7 +1,7 @@
 import { invariant, logger } from 'tkt'
 import { ITodo } from './types'
 import { getMongoDb } from './MongoDB'
-import { repoContext } from './RepoContext'
+import { repoContext } from './GitHubRepository'
 import { ObjectId } from 'bson'
 import { currentProcessId } from './ProcessId'
 
