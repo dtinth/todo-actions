@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
-import { execSync } from 'child_process'
+import { execSync, execFileSync } from 'child_process'
 import { File } from './File'
 import { parseTodos } from './TodoParser'
 import { ITodo, IFile } from './types'
@@ -26,6 +26,7 @@ export const repoContext = {
 type CodeRepository = {
   todoComments: ITodo[]
   files: IFile[]
+  saveChanges(commitMessage: string): Promise<void>
 }
 
 export async function scanCodeRepository(): Promise<CodeRepository> {
@@ -37,7 +38,7 @@ export async function scanCodeRepository(): Promise<CodeRepository> {
     .filter(name => name)
 
   const todoComments = []
-  const files = []
+  const files: IFile[] = []
   log.info('Parsing TODO tags...')
   for (const filePath of filesWithTodoMarker) {
     // TODO [#1]: Implement ignoring paths
@@ -48,5 +49,28 @@ export async function scanCodeRepository(): Promise<CodeRepository> {
     todoComments.push(...todos)
     files.push(file)
   }
-  return { todoComments, files }
+  return {
+    todoComments,
+    files,
+    async saveChanges(commitMessage) {
+      const changedFiles = files.filter(file => file.contents.changed)
+      log.info('Files changed: %s', changedFiles.length)
+      if (changedFiles.length === 0) {
+        return
+      }
+      for (const file of changedFiles) {
+        file.save()
+      }
+      execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
+      execFileSync('git', ['commit', '-m', commitMessage], {
+        stdio: 'inherit',
+      })
+      if (!process.env.GITHUB_TOKEN) {
+        throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
+      }
+      execSync('git push origin $(git rev-parse --abbrev-ref HEAD)', {
+        stdio: 'inherit',
+      })
+    },
+  }
 }
