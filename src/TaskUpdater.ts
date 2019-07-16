@@ -10,8 +10,7 @@ const log = logger('TaskUpdater')
 export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
   for (const todo of todos) {
     const reference =
-      todo.reference ||
-      invariant(false, 'Unexpected TODO without reference encountered')
+      todo.reference || invariant(false, 'Unexpected unidentified TODO marker')
     const unassociated = reference.startsWith('$')
     if (unassociated) {
       const todoUniqueKey = reference.substr(1)
@@ -19,10 +18,20 @@ export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
       const taskIdentifier = await resolveTask(todoUniqueKey, todo)
       log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskIdentifier)
       todo.reference = taskIdentifier
-    } else {
-      // TODO [#5]: Generate the task body.
-      // TODO [#6]: Update the task body if changed.
     }
+  }
+}
+
+export async function reconcileTasks(todos: ITodo[]) {
+  for (const todo of todos) {
+    const reference =
+      todo.reference || invariant(false, 'Unexpected unidentified TODO marker')
+    invariant(
+      !reference.startsWith('$'),
+      'Expected all TODO comments to be associated by now.',
+    )
+    // TODO [#5]: Generate the task body.
+    // TODO [#6]: Update the task body if changed.
   }
 
   // TODO [#7]: Complete tasks whose TODO comments are no longer present.

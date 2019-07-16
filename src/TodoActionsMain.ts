@@ -39,4 +39,7 @@ export async function runMain() {
   // Update all the tasks according to the TODO state.
   await TaskUpdater.ensureAllTodosAreAssociated(todoComments)
   await saveChanges('Update TODO references')
+
+  // Reconcile all tasks
+  await TaskUpdater.reconcileTasks(todoComments)
 }
