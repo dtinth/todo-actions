@@ -1,8 +1,9 @@
 import { invariant, logger } from 'tkt'
 import { ITodo } from './types'
-import { repoContext } from './CodeRepository'
-import { createTask } from './TaskManagementSystem'
-import { beginTaskResolution } from './DataStore'
+
+import * as CodeRepository from './CodeRepository'
+import * as TaskManagementSystem from './TaskManagementSystem'
+import * as DataStore from './DataStore'
 
 const log = logger('TaskUpdater')
 
@@ -31,9 +32,9 @@ export async function resolveTask(
   todoUniqueKey: string,
   todo: ITodo,
 ): Promise<string> {
-  const resolution = await beginTaskResolution(
+  const resolution = await DataStore.beginTaskResolution(
     todoUniqueKey,
-    repoContext.repositoryNodeId,
+    CodeRepository.repoContext.repositoryNodeId,
     todo,
   )
   if ('existingTaskIdentifier' in resolution) {
@@ -41,7 +42,7 @@ export async function resolveTask(
   }
   const taskCreationLock = await resolution.acquireTaskCreationLock()
   log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey)
-  const taskIdentifier = await createTask(todo)
+  const taskIdentifier = await TaskManagementSystem.createTask(todo)
   taskCreationLock.finish(taskIdentifier)
   return taskIdentifier
 }

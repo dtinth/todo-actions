@@ -1,9 +1,10 @@
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
-import { File } from './File'
-import { parseTodos } from './TodoParser'
 import { ITodo, IFile } from './types'
+import { File } from './File'
+
+import * as TodoParser from './TodoParser'
 
 const log = logger('CodeRepository')
 
@@ -44,7 +45,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
     // TODO [#1]: Implement ignoring paths
     if (filePath === 'README.md') continue
     const file = new File(filePath)
-    const todos = parseTodos(file)
+    const todos = TodoParser.parseTodos(file)
     log.info('%s: %s found', filePath, todos.length)
     todoComments.push(...todos)
     files.push(file)

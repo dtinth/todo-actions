@@ -1,7 +1,8 @@
 import { logger } from 'tkt'
 import { ITodo } from './types'
-import { getMongoDb } from './MongoDB'
 import { ObjectId } from 'mongodb'
+
+import { getMongoDb } from './MongoDB'
 import { currentProcessId } from './ProcessId'
 
 const log = logger('DataStore')

@@ -1,6 +1,7 @@
 import { invariant, logger } from 'tkt'
 import { ITodo } from './types'
-import { repoContext } from './CodeRepository'
+
+import * as CodeRepository from './CodeRepository'
 
 const log = logger('TaskManagementSystem')
 
@@ -23,7 +24,7 @@ export async function createTask(todo: ITodo): Promise<string> {
     `,
     {
       input: {
-        repositoryId: repoContext.repositoryNodeId,
+        repositoryId: CodeRepository.repoContext.repositoryNodeId,
         title: todo.title,
         // TODO [#8]: Properly generate the initial issue body.
         body: todo.body,

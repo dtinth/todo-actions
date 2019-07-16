@@ -1,14 +1,18 @@
 import { invariant } from 'tkt'
-import { ensureAllTodosAreAssociated } from './TaskUpdater'
 import { logger } from 'tkt'
-import { scanCodeRepository } from './CodeRepository'
 import { ObjectId } from 'bson'
+
+import * as TaskUpdater from './TaskUpdater'
+import * as CodeRepository from './CodeRepository'
 
 const log = logger('main')
 
 export async function runMain() {
   log.info('Search for files with TODO tags...')
-  const { todoComments, saveChanges } = await scanCodeRepository()
+  const {
+    todoComments,
+    saveChanges,
+  } = await CodeRepository.scanCodeRepository()
   log.info('Total TODOs found: %s', todoComments.length)
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
@@ -33,6 +37,6 @@ export async function runMain() {
   }
 
   // Update all the tasks according to the TODO state.
-  await ensureAllTodosAreAssociated(todoComments)
+  await TaskUpdater.ensureAllTodosAreAssociated(todoComments)
   await saveChanges('Update TODO references')
 }
