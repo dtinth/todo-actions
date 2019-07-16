@@ -2,6 +2,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.15",
     "@types/node": "^12.0.12",
+    "@types/mongodb": "^3.1.28",
     "jest": "^24.8.0",
     "madge": "^3.4.4",
     "ts-jest": "^24.0.2",
@@ -10,12 +11,12 @@
   },
   "scripts": {
     "test": "jest",
+    "prepare": "rm -rf lib && tsc",
     "dev": "ts-node -r dotenv/config src/CLIEntrypoint.ts"
   },
   "dependencies": {
     "@octokit/graphql": "^3.0.1",
     "@octokit/rest": "^16.28.4",
-    "@types/mongodb": "^3.1.28",
     "dotenv": "^8.0.0",
     "mongodb": "^3.2.7",
     "tkt": "1.1.0"
