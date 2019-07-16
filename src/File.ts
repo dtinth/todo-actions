@@ -18,6 +18,7 @@ export class File implements IFile {
         this.contents.toString(),
         'utf8',
       )
+      this.contents.changed = false
     }
   }
 }

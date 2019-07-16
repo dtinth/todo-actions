@@ -15,7 +15,9 @@ export async function updateTasks(todos: ITodo[]) {
     const unresolved = reference.startsWith('$')
     if (unresolved) {
       const todoUniqueKey = reference.substr(1)
+      log.debug('Found unresolved TODO %s, resolving task...', todoUniqueKey)
       const taskIdentifier = await resolveTask(todoUniqueKey, todo)
+      log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskIdentifier)
       todo.reference = taskIdentifier
     } else {
       // TODO [$5d239d6f029ffa0007ca8a0a]: Generate the task body.
@@ -23,7 +25,6 @@ export async function updateTasks(todos: ITodo[]) {
     }
   }
 
-  // TODO [$5d239d6f029ffa0007ca8a0c]: Create a commit if some todos have been resolved to task.
   // TODO [$5d2db627d61e282ce803530e]: Complete tasks whose TODO comments are no longer present.
 }
 
@@ -32,7 +33,6 @@ export async function resolveTask(
   todo: ITodo,
 ): Promise<string> {
   const db = await getMongoDb()
-
   const _id = ObjectId.createFromHexString(todoUniqueKey)
 
   // Ensure a task exists.
@@ -54,10 +54,20 @@ export async function resolveTask(
     throw new Error('Failed to upsert a task.')
   }
   if (task.value.taskIdentifier) {
+    log.debug(
+      'Found already-existing identifier %s for TODO %s.',
+      task.value.taskIdentifier,
+      todoUniqueKey,
+    )
     return task.value.taskIdentifier
   }
 
   // Acquire a lock...
+  log.debug(
+    'Acquiring lock for TODO %s (currentProcessId=%s).',
+    todoUniqueKey,
+    currentProcessId,
+  )
   const lockedTask = await db.tasks.findOneAndUpdate(
     {
       _id: _id,
@@ -79,9 +89,15 @@ export async function resolveTask(
   }
 
   // Obtain a task identifier
+  log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey)
   const taskIdentifier = await createTask(todo)
 
   // Associate
+  log.debug(
+    'Created task %s for TODO %s. Saving changes.',
+    taskIdentifier,
+    todoUniqueKey,
+  )
   await db.tasks.findOneAndUpdate(
     { _id: _id },
     { $set: { taskIdentifier: taskIdentifier } },

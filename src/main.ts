@@ -41,21 +41,7 @@ cli()
       for (const todo of todosWithoutReference) {
         todo.reference = `$${require('bson-objectid').default.generate()}`
       }
-      const changedFiles = files.filter(file => file.contents.changed)
-      log.info('Files changed: %s', changedFiles.length)
-      for (const file of changedFiles) {
-        file.save()
-      }
-      execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
-      execFileSync('git', ['commit', '-m', 'Collect TODO comments'], {
-        stdio: 'inherit',
-      })
-      if (!process.env.GITHUB_TOKEN) {
-        throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
-      }
-      execSync('git push origin $(git rev-parse --abbrev-ref HEAD)', {
-        stdio: 'inherit',
-      })
+      saveChanges(files, 'Collect TODO comments')
     }
 
     // Every TODO must have a reference by now.
@@ -70,7 +56,31 @@ cli()
 
     // Update all the tasks according to the TODO state.
     await updateTasks(todoComments)
+    await saveChanges(files, 'Update TODO references')
 
     process.exit(0)
   })
   .parse()
+
+function saveChanges(files: File[], commitMessage: string) {
+  const changedFiles = files.filter(file => file.contents.changed)
+  log.info('Files changed: %s', changedFiles.length)
+
+  if (changedFiles.length === 0) {
+    return
+  }
+
+  for (const file of changedFiles) {
+    file.save()
+  }
+  execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
+  execFileSync('git', ['commit', '-m', commitMessage], {
+    stdio: 'inherit',
+  })
+  if (!process.env.GITHUB_TOKEN) {
+    throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
+  }
+  execSync('git push origin $(git rev-parse --abbrev-ref HEAD)', {
+    stdio: 'inherit',
+  })
+}
