@@ -1,3 +1,5 @@
+import { IFile, ITodo } from './types'
+
 export function parseTodos(file: IFile): ITodo[] {
   const out: Todo[] = []
 

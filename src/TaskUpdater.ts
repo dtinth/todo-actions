@@ -1,4 +1,5 @@
 import { invariant } from 'tkt'
+import { ITodo } from './types'
 
 exports.updateTasks = async function updateTasks(todos: ITodo[]) {
   for (const todo of todos) {

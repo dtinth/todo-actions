@@ -5,6 +5,8 @@ import { execSync, execFileSync } from 'child_process'
 
 const log = logger('main')
 
+require('dotenv').config()
+
 cli()
   .command('$0', 'Collect TODOs and create issues', {}, async args => {
     log.info('Search for files with TODO tags...')

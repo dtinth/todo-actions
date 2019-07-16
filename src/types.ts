@@ -2,7 +2,7 @@
  * A representation of a file being processed,
  * with mutable contents.
  */
-interface IFile {
+export interface IFile {
   fileName: string
   contents: IFileContents
   /**
@@ -11,7 +11,7 @@ interface IFile {
   save(): void
 }
 
-interface IFileContents {
+export interface IFileContents {
   changed: boolean
 
   /**
@@ -27,7 +27,7 @@ interface IFileContents {
   changeLine(lineIndex: number, newLineContents: string): void
 }
 
-interface ITodo {
+export interface ITodo {
   file: IFile
   reference: string | null
   title: string

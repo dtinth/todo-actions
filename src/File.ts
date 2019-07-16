@@ -1,3 +1,5 @@
+import { IFile, IFileContents } from './types'
+
 export class File implements IFile {
   fileName: string
   contents: FileContents
