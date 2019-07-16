@@ -7,7 +7,7 @@ action "Collect TODO" {
   uses = "./"
   secrets = [
     "GITHUB_TOKEN",
-    "TODO_ACTIONS_FIREBASE_SERVICE_ACCOUNT",
+    "TODO_ACTIONS_MONGO_URL",
   ]
 }
 
