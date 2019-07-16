@@ -12,12 +12,16 @@ export async function runMain() {
   const {
     todoComments,
     saveChanges,
+    isOnDefaultBranch,
   } = await CodeRepository.scanCodeRepository()
   log.info('Total TODOs found: %s', todoComments.length)
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
 
-  // TODO [#29]: Stop if not default branch.
+  if (!isOnDefaultBranch) {
+    log.info('Not on default branch -- aborting.')
+    return
+  }
 
   if (todosWithoutReference.length > 0) {
     for (const todo of todosWithoutReference) {
