@@ -23,8 +23,12 @@ export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
 }
 
 export async function reconcileTasks(todos: ITodo[]) {
-  const allOpenTasks = await DataStore.findAllUncompletedTasks(
+  const uncompletedTasks = await DataStore.findAllUncompletedTasks(
     CodeRepository.repoContext.repositoryNodeId,
+  )
+  log.info(
+    'Number of registered uncompleted tasks: %s',
+    uncompletedTasks.length,
   )
 
   for (const todo of todos) {
@@ -34,7 +38,7 @@ export async function reconcileTasks(todos: ITodo[]) {
       !reference.startsWith('$'),
       'Expected all TODO comments to be associated by now.',
     )
-    const task = allOpenTasks.find(t => t.taskReference === reference)
+    const task = uncompletedTasks.find(t => t.taskReference === reference)
     if (!task) {
       log.warn(
         'Cannot find a matching task for TODO comment with reference "%s"',
@@ -47,7 +51,7 @@ export async function reconcileTasks(todos: ITodo[]) {
     // TODO [#27]: Update the task body if changed.
   }
 
-  for (const task of allOpenTasks) {
+  for (const task of uncompletedTasks) {
     if (todos.find(todo => todo.reference === task.taskReference)) return
     await TaskManagementSystem.completeTask(task.taskReference)
     await task.markAsCompleted()
