@@ -17,7 +17,7 @@ export function generateTaskInformationFromTodo(todo: ITodo): TaskInformation {
   const owner = repoContext.repositoryOwner
   const repo = repoContext.repositoryName
 
-  // TODO [$5d2e07f54a88790007dd926f]: Don’t hardcode master branch when generating URL
+  // TODO [#33]: Don’t hardcode master branch when generating URL
   const url = `https://github.com/${owner}/${repo}/blob/master/${file}#L${line}`
   const link = `[${file}:${line}](${url})`
   const body = [
@@ -26,7 +26,7 @@ export function generateTaskInformationFromTodo(todo: ITodo): TaskInformation {
     '---',
     `_` +
       `This issue has been automatically created by [todo-actions](https://github.com/apps/todo-actions) based on a TODO comment found in ${link}. ` +
-      // TODO [$5d2e07f54a88790007dd9270]: Don’t hardcode master branch in task description
+      // TODO [#34]: Don’t hardcode master branch in task description
       `It will automatically be closed when the TODO comment is removed from the master branch.` +
       `_`,
   ].join('\n')
