@@ -4,7 +4,10 @@
     "target": "es2016",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "rootDir": "src",
+    "outDir": "lib",
+    "sourceMap": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/node_modules/*"]
