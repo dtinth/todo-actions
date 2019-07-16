@@ -20,7 +20,7 @@ cli()
 
     log.info('Parsing TODO tags...')
     for (const filePath of filesWithTodoMarker) {
-      // TODO [$5d21c7a2b86bd10007ba06aa]: Implement ignoring paths
+      // TODO [#1]: Implement ignoring paths
       if (filePath === 'README.md') continue
 
       const file = new File(filePath)
@@ -35,7 +35,7 @@ cli()
     const todosWithoutReference = todoComments.filter(todo => !todo.reference)
     log.info('TODOs without references: %s', todosWithoutReference.length)
 
-    // TODO [$5d239667a574bd00079eab7f]: Stop if not default branch.
+    // TODO [#2]: Stop if not default branch.
 
     if (todosWithoutReference.length > 0) {
       for (const todo of todosWithoutReference) {
