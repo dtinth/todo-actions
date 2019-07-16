@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "jest",
-    "prepare": "rm -rf lib && tsc",
+    "build": "rm -rf lib && tsc",
     "dev": "ts-node -r dotenv/config src/CLIEntrypoint.ts"
   },
   "dependencies": {
