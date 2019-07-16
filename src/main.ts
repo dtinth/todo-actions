@@ -2,10 +2,9 @@ import { File } from './File'
 import { parseTodos } from './TodoParser'
 import { logger, cli, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
+import { updateTasks } from './TaskUpdater'
 
 const log = logger('main')
-
-require('dotenv').config()
 
 cli()
   .command('$0', 'Collect TODOs and create issues', {}, async args => {
@@ -68,6 +67,9 @@ cli()
         todo.file.fileName,
       )
     }
+
+    // Update all the tasks according to the TODO state.
+    await updateTasks(todoComments)
 
     process.exit(0)
   })
