@@ -2,6 +2,7 @@ import { invariant } from 'tkt'
 import { updateTasks } from './TaskUpdater'
 import { logger } from 'tkt'
 import { scanCodeRepository } from './CodeRepository'
+import { ObjectId } from 'bson'
 
 const log = logger('main')
 
@@ -15,7 +16,7 @@ export async function runMain() {
   // TODO [#2]: Stop if not default branch.
   if (todosWithoutReference.length > 0) {
     for (const todo of todosWithoutReference) {
-      todo.reference = `$${require('bson-objectid').default.generate()}`
+      todo.reference = `$${new ObjectId().toHexString()}`
     }
     await saveChanges('Collect TODO comments')
   }
