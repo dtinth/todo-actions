@@ -61,6 +61,10 @@ class Todo implements ITodo {
     )
   }
 
+  get startLine(): number {
+    return this.line + 1
+  }
+
   handleLine(line: string) {
     if (!this.title) {
       this.title = line

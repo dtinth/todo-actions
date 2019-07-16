@@ -29,6 +29,7 @@ export interface IFileContents {
 
 export interface ITodo {
   file: IFile
+  startLine: number
   reference: string | null
   title: string
   body: string
