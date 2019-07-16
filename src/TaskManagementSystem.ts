@@ -31,7 +31,7 @@ export async function createTask(todo: ITodo): Promise<string> {
       },
     },
   )
-  log.debug('Result:', result)
+  log.debug('Create issue result:', result)
   return result.createIssue.issue.number
     ? `#${result.createIssue.issue.number}`
     : invariant(
@@ -52,5 +52,5 @@ export async function completeTask(taskReference: string): Promise<void> {
     issue_number: +taskReference.substr(1),
     state: 'closed',
   })
-  log.debug('Result:', result.data)
+  log.debug('Issue close result:', result.data)
 }

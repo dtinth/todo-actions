@@ -53,6 +53,10 @@ export async function reconcileTasks(todos: ITodo[]) {
 
   for (const task of uncompletedTasks) {
     if (todos.find(todo => todo.reference === task.taskReference)) continue
+    log.info(
+      'TODO for task "%s" is gone -- completing task!',
+      task.taskReference,
+    )
     await TaskManagementSystem.completeTask(task.taskReference)
     await task.markAsCompleted()
   }
