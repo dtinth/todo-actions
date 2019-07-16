@@ -6,13 +6,13 @@ import { beginTaskResolution } from './DataStore'
 
 const log = logger('TaskUpdater')
 
-export async function updateTasks(todos: ITodo[]) {
+export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
   for (const todo of todos) {
     const reference =
       todo.reference ||
       invariant(false, 'Unexpected TODO without reference encountered')
-    const unresolved = reference.startsWith('$')
-    if (unresolved) {
+    const unassociated = reference.startsWith('$')
+    if (unassociated) {
       const todoUniqueKey = reference.substr(1)
       log.debug('Found unresolved TODO %s, resolving task...', todoUniqueKey)
       const taskIdentifier = await resolveTask(todoUniqueKey, todo)

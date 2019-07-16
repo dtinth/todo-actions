@@ -1,5 +1,5 @@
 import { invariant } from 'tkt'
-import { updateTasks } from './TaskUpdater'
+import { ensureAllTodosAreAssociated } from './TaskUpdater'
 import { logger } from 'tkt'
 import { scanCodeRepository } from './CodeRepository'
 import { ObjectId } from 'bson'
@@ -33,6 +33,6 @@ export async function runMain() {
   }
 
   // Update all the tasks according to the TODO state.
-  await updateTasks(todoComments)
+  await ensureAllTodosAreAssociated(todoComments)
   await saveChanges('Update TODO references')
 }
