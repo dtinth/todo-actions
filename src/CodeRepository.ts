@@ -23,13 +23,13 @@ export const repoContext = {
     ),
 }
 
-type CodeRepository = {
+type CodeRepositoryState = {
   todoComments: ITodo[]
   files: IFile[]
   saveChanges(commitMessage: string): Promise<void>
 }
 
-export async function scanCodeRepository(): Promise<CodeRepository> {
+export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   log.info('Search for files with TODO tags...')
   const filesWithTodoMarker = execSync('git grep -Il TODO', {
     encoding: 'utf8',
