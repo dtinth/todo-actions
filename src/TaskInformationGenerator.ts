@@ -14,10 +14,11 @@ export function generateTaskInformationFromTodo(todo: ITodo): TaskInformation {
   const file = todo.file.fileName
   // TODO [#31]: Link to end line
   const line = todo.startLine
-  // TODO [#32]: Don’t hardcode master branch when generating URL
-  const url = `https://github.com/${repoContext.repositoryOwner}/${
-    repoContext.repositoryName
-  }/blob/master/${file}#L${line}`
+  const owner = repoContext.repositoryOwner
+  const repo = repoContext.repositoryName
+
+  // TODO: Don’t hardcode master branch when generating URL
+  const url = `https://github.com/${owner}/${repo}/blob/master/${file}#L${line}`
   const link = `[${file}:${line}](${url})`
   const body = [
     todo.body,
