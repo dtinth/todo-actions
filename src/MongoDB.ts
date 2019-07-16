@@ -16,7 +16,7 @@ type TaskSchema = {
   /**
    * The identifier of the associated task.
    */
-  taskIdentifier: string | null
+  taskReference: string | null
 
   /**
    * `true` if issue is completed.
@@ -64,7 +64,7 @@ export async function getMongoDb() {
     const db = client.db()
     const tasks = db.collection<TaskSchema>('tasks')
 
-    // TODO: Add index to ensure that [repositoryId, taskIdentifier] is unique and can be queried quickly.
+    // TODO: Add index to ensure that [repositoryId, taskReference] is unique and can be queried quickly.
 
     return {
       tasks: tasks,

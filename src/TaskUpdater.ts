@@ -15,14 +15,18 @@ export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
     if (unassociated) {
       const todoUniqueKey = reference.substr(1)
       log.debug('Found unresolved TODO %s, resolving task...', todoUniqueKey)
-      const taskIdentifier = await resolveTask(todoUniqueKey, todo)
-      log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskIdentifier)
-      todo.reference = taskIdentifier
+      const taskReference = await resolveTask(todoUniqueKey, todo)
+      log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskReference)
+      todo.reference = taskReference
     }
   }
 }
 
 export async function reconcileTasks(todos: ITodo[]) {
+  const allOpenTasks = await DataStore.findAllUncompletedTasks(
+    CodeRepository.repoContext.repositoryNodeId,
+  )
+
   for (const todo of todos) {
     const reference =
       todo.reference || invariant(false, 'Unexpected unidentified TODO marker')
@@ -30,6 +34,8 @@ export async function reconcileTasks(todos: ITodo[]) {
       !reference.startsWith('$'),
       'Expected all TODO comments to be associated by now.',
     )
+    const task = allOpenTasks.find(t => t.taskReference === reference)
+    // TODO: Check if the task state changed.
     // TODO [#5]: Generate the task body.
     // TODO [#6]: Update the task body if changed.
   }
@@ -46,12 +52,12 @@ export async function resolveTask(
     CodeRepository.repoContext.repositoryNodeId,
     todo,
   )
-  if ('existingTaskIdentifier' in resolution) {
-    return resolution.existingTaskIdentifier
+  if ('existingTaskReference' in resolution) {
+    return resolution.existingTaskReference
   }
   const taskCreationLock = await resolution.acquireTaskCreationLock()
   log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey)
-  const taskIdentifier = await TaskManagementSystem.createTask(todo)
-  taskCreationLock.finish(taskIdentifier)
-  return taskIdentifier
+  const taskReference = await TaskManagementSystem.createTask(todo)
+  taskCreationLock.finish(taskReference)
+  return taskReference
 }

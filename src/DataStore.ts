@@ -1,4 +1,4 @@
-import { logger } from 'tkt'
+import { logger, invariant } from 'tkt'
 import { ITodo } from './types'
 import { ObjectId } from 'mongodb'
 
@@ -8,11 +8,11 @@ import { currentProcessId } from './ProcessId'
 const log = logger('DataStore')
 
 type TaskResolutionProcedure =
-  | { existingTaskIdentifier: string }
+  | { existingTaskReference: string }
   | { acquireTaskCreationLock(): Promise<TaskCreationLock> }
 
 type TaskCreationLock = {
-  finish(taskIdentifier: string): Promise<void>
+  finish(taskReference: string): Promise<void>
 }
 
 export async function beginTaskResolution(
@@ -30,7 +30,7 @@ export async function beginTaskResolution(
       $setOnInsert: {
         _id: _id,
         repositoryId: repositoryId,
-        taskIdentifier: null,
+        taskReference: null,
         createdAt: new Date(),
         ownerProcessId: null,
         ownerProcessTimestamp: null,
@@ -41,13 +41,13 @@ export async function beginTaskResolution(
   if (!task.value) {
     throw new Error('Failed to upsert a task.')
   }
-  if (task.value.taskIdentifier) {
+  if (task.value.taskReference) {
     log.debug(
       'Found already-existing identifier %s for TODO %s.',
-      task.value.taskIdentifier,
+      task.value.taskReference,
       todoUniqueKey,
     )
-    return { existingTaskIdentifier: task.value.taskIdentifier }
+    return { existingTaskReference: task.value.taskReference }
   }
 
   return {
@@ -78,19 +78,44 @@ export async function beginTaskResolution(
         throw new Error('Failed to acquire a lock for this task.')
       }
       return {
-        async finish(taskIdentifier) {
+        async finish(taskReference) {
           // Associate
           log.debug(
             'Created task %s for TODO %s. Saving changes.',
-            taskIdentifier,
+            taskReference,
             todoUniqueKey,
           )
           await db.tasks.findOneAndUpdate(
             { _id: _id },
-            { $set: { taskIdentifier: taskIdentifier } },
+            { $set: { taskReference: taskReference } },
           )
         },
       }
     },
   }
+}
+
+type Task = {
+  taskReference: string
+}
+
+export async function findAllUncompletedTasks(
+  repositoryId: string,
+): Promise<Task[]> {
+  const db = await getMongoDb()
+  const result = await db.tasks
+    .find({
+      repositoryId: repositoryId,
+      completed: { $ne: true },
+      taskReference: { $ne: null },
+    })
+    .toArray()
+
+  return result.map(taskData => {
+    return {
+      taskReference:
+        taskData.taskReference ||
+        invariant(false, 'Unexpected unassociated task.'),
+    }
+  })
 }

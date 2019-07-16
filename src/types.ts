@@ -33,3 +33,7 @@ export interface ITodo {
   title: string
   body: string
 }
+
+export interface ITaskState {
+  hash: string
+}
