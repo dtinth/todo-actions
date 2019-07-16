@@ -1,5 +1,5 @@
 import { logger, invariant } from 'tkt'
-import { ITodo } from './types'
+import { ITodo, ITaskState } from './types'
 import { ObjectId } from 'mongodb'
 
 import { getMongoDb } from './MongoDB'
@@ -97,6 +97,7 @@ export async function beginTaskResolution(
 
 type Task = {
   taskReference: string
+  state: ITaskState
 }
 
 export async function findAllUncompletedTasks(
@@ -116,6 +117,9 @@ export async function findAllUncompletedTasks(
       taskReference:
         taskData.taskReference ||
         invariant(false, 'Unexpected unassociated task.'),
-    }
+      state: {
+        hash: taskData.hash || '',
+      },
+    } as Task
   })
 }

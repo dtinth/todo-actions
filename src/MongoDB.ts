@@ -37,6 +37,11 @@ type TaskSchema = {
    * Timestamp at which the lock was acquired.
    */
   ownerProcessTimestamp: Date | null
+
+  /**
+   * Hash of the task body contents
+   */
+  hash?: string
 }
 
 let mongoPromise: Promise<{
