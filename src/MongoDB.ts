@@ -1,4 +1,4 @@
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, ObjectId, MongoClient } from 'mongodb'
 import { invariant, logger } from 'tkt'
 
 type TaskSchema = {
@@ -40,6 +40,7 @@ type TaskSchema = {
 }
 
 let mongoPromise: Promise<{
+  client: MongoClient
   tasks: Collection<TaskSchema>
 }>
 
@@ -67,7 +68,14 @@ export async function getMongoDb() {
     // TODO [#9]: Add index to ensure that [repositoryId, taskReference] is unique and can be queried quickly.
 
     return {
+      client,
       tasks: tasks,
     }
   })())
+}
+
+export async function close() {
+  if (!mongoPromise) return
+  const mongo = await mongoPromise
+  mongo.client.close()
 }
