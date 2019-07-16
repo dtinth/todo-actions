@@ -22,6 +22,20 @@ export const repoContext = {
       false,
       'GitHub Repo Node ID not found, either in GitHub Action event payload and GITHUB_REPO_NODE_ID environment variable.',
     ),
+  repositoryOwner:
+    process.env.GITHUB_REPO_OWNER ||
+    (event && event.repository && event.repository.full_name.split('/')[0]) ||
+    invariant(
+      false,
+      'GitHub Repo Owner not found, either in GitHub Action event payload and GITHUB_REPO_OWNER environment variable.',
+    ),
+  repositoryName:
+    process.env.GITHUB_REPO_NAME ||
+    (event && event.repository && event.repository.full_name.split('/')[1]) ||
+    invariant(
+      false,
+      'GitHub Repo Name not found, either in GitHub Action event payload and GITHUB_REPO_NAME environment variable.',
+    ),
 }
 
 type CodeRepositoryState = {

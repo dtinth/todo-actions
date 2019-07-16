@@ -47,7 +47,11 @@ export async function reconcileTasks(todos: ITodo[]) {
     // TODO [#27]: Update the task body if changed.
   }
 
-  // TODO [#28]: Complete tasks whose TODO comments are no longer present.
+  for (const task of allOpenTasks) {
+    if (todos.find(todo => todo.reference === task.taskReference)) return
+    await TaskManagementSystem.completeTask(task.taskReference)
+    await task.markAsCompleted()
+  }
 }
 
 export async function resolveTask(

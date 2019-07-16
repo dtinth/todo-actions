@@ -98,6 +98,7 @@ export async function beginTaskResolution(
 type Task = {
   taskReference: string
   state: ITaskState
+  markAsCompleted(): Promise<void>
 }
 
 export async function findAllUncompletedTasks(
@@ -119,6 +120,12 @@ export async function findAllUncompletedTasks(
         invariant(false, 'Unexpected unassociated task.'),
       state: {
         hash: taskData.hash || '',
+      },
+      async markAsCompleted() {
+        await db.tasks.findOneAndUpdate(
+          { _id: taskData._id },
+          { $set: { completed: true } },
+        )
       },
     } as Task
   })

@@ -39,3 +39,18 @@ export async function createTask(todo: ITodo): Promise<string> {
         'Failed to get issue number out of createIssue API call.',
       )
 }
+
+export async function completeTask(taskReference: string): Promise<void> {
+  const Octokit = await import('@octokit/rest')
+  const octokit = new Octokit({
+    auth: `token ${process.env.GITHUB_TOKEN ||
+      invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+  })
+  const result = await octokit.issues.update({
+    owner: CodeRepository.repoContext.repositoryOwner,
+    repo: CodeRepository.repoContext.repositoryName,
+    issue_number: +taskReference.substr(1),
+    state: 'closed',
+  })
+  log.debug('Result:', result.data)
+}
