@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# TODO [$5d2dbb5044a917000799b4f9]: Once precompilation is done, run the compiled script directly.
+# TODO [#4]: Once precompilation is done, run the compiled script directly.
 #
 # ```
 # sh -c "node /app/lib/main.js $*"

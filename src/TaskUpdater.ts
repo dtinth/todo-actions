@@ -20,12 +20,12 @@ export async function updateTasks(todos: ITodo[]) {
       log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskIdentifier)
       todo.reference = taskIdentifier
     } else {
-      // TODO [$5d239d6f029ffa0007ca8a0a]: Generate the task body.
-      // TODO [$5d239d6f029ffa0007ca8a0b]: Update the task body if changed.
+      // TODO [#5]: Generate the task body.
+      // TODO [#6]: Update the task body if changed.
     }
   }
 
-  // TODO [$5d2db627d61e282ce803530e]: Complete tasks whose TODO comments are no longer present.
+  // TODO [#7]: Complete tasks whose TODO comments are no longer present.
 }
 
 export async function resolveTask(
@@ -127,7 +127,7 @@ async function createTask(todo: ITodo): Promise<string> {
       input: {
         repositoryId: repoContext.repositoryNodeId,
         title: todo.title,
-        // TODO [$5d2db627d61e282ce803530f]: Properly generate the initial issue body.
+        // TODO [#8]: Properly generate the initial issue body.
         body: todo.body,
       },
     },
