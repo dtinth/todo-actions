@@ -54,3 +54,22 @@ export async function completeTask(taskReference: string): Promise<void> {
   })
   log.debug('Issue close result:', result.data)
 }
+
+export async function updateTask(
+  taskReference: string,
+  information: { title: string; body: string },
+): Promise<void> {
+  const Octokit = await import('@octokit/rest')
+  const octokit = new Octokit({
+    auth: `token ${process.env.GITHUB_TOKEN ||
+      invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+  })
+  const result = await octokit.issues.update({
+    owner: CodeRepository.repoContext.repositoryOwner,
+    repo: CodeRepository.repoContext.repositoryName,
+    issue_number: +taskReference.substr(1),
+    title: information.title,
+    body: information.body,
+  })
+  log.debug('Issue update result:', result.data)
+}
