@@ -42,7 +42,7 @@ export async function reconcileTasks(todos: ITodo[]) {
       )
       continue
     }
-    // TODO [$5d2df3728f58070007d0a16b]: Check if the task state changed.
+    // TODO [#10]: Check if the task state changed.
     // TODO [#5]: Generate the task body.
     // TODO [#6]: Update the task body if changed.
   }
