@@ -12,7 +12,14 @@ type TaskResolutionProcedure =
   | { acquireTaskCreationLock(): Promise<TaskCreationLock> }
 
 type TaskCreationLock = {
-  finish(taskReference: string): Promise<void>
+  finish(taskReference: string, state: ITaskState): Promise<void>
+}
+
+type Task = {
+  taskReference: string
+  state: ITaskState
+  markAsCompleted(): Promise<void>
+  updateState(newState: ITaskState): Promise<void>
 }
 
 export async function beginTaskResolution(
@@ -78,7 +85,7 @@ export async function beginTaskResolution(
         throw new Error('Failed to acquire a lock for this task.')
       }
       return {
-        async finish(taskReference) {
+        async finish(taskReference, state) {
           // Associate
           log.debug(
             'Created task %s for TODO %s. Saving changes.',
@@ -87,19 +94,12 @@ export async function beginTaskResolution(
           )
           await db.tasks.findOneAndUpdate(
             { _id: _id },
-            { $set: { taskReference: taskReference } },
+            { $set: { taskReference: taskReference, hash: state.hash } },
           )
         },
       }
     },
   }
-}
-
-type Task = {
-  taskReference: string
-  state: ITaskState
-  markAsCompleted(): Promise<void>
-  updateState(newState: ITaskState): Promise<void>
 }
 
 export async function findAllUncompletedTasks(

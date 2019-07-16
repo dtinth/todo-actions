@@ -5,7 +5,14 @@ import * as CodeRepository from './CodeRepository'
 
 const log = logger('TaskManagementSystem')
 
-export async function createTask(todo: ITodo): Promise<string> {
+type TaskInformation = {
+  title: string
+  body: string
+}
+
+export async function createTask(
+  information: TaskInformation,
+): Promise<string> {
   const graphql = require('@octokit/graphql').defaults({
     headers: {
       authorization: `token ${process.env.GITHUB_TOKEN ||
@@ -25,9 +32,8 @@ export async function createTask(todo: ITodo): Promise<string> {
     {
       input: {
         repositoryId: CodeRepository.repoContext.repositoryNodeId,
-        title: todo.title,
-        // TODO [#24]: Properly generate the initial issue body.
-        body: todo.body,
+        title: information.title,
+        body: information.body,
       },
     },
   )
@@ -57,7 +63,7 @@ export async function completeTask(taskReference: string): Promise<void> {
 
 export async function updateTask(
   taskReference: string,
-  information: { title: string; body: string },
+  information: TaskInformation,
 ): Promise<void> {
   const Octokit = await import('@octokit/rest')
   const octokit = new Octokit({

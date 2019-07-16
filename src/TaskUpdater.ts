@@ -95,7 +95,12 @@ export async function resolveTask(
   }
   const taskCreationLock = await resolution.acquireTaskCreationLock()
   log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey)
-  const taskReference = await TaskManagementSystem.createTask(todo)
-  taskCreationLock.finish(taskReference)
+  const {
+    title,
+    body,
+    state,
+  } = TaskInformationGenerator.generateTaskInformationFromTodo(todo)
+  const taskReference = await TaskManagementSystem.createTask({ title, body })
+  taskCreationLock.finish(taskReference, state)
   return taskReference
 }
