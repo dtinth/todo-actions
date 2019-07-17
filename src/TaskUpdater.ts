@@ -15,6 +15,10 @@ export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
       todo.reference || invariant(false, 'Unexpected unidentified TODO marker')
     const unassociated = reference.startsWith('$')
     if (unassociated) {
+      // TODO: Isolate error when creating tasks
+      // Failure to create a task should not prevent the action from progressing forward.
+      // We can simply skip processing this comment for now.
+      // Since this script is designed to be idempotent, it can be retried later.
       const todoUniqueKey = reference.substr(1)
       log.debug('Found unresolved TODO %s, resolving task...', todoUniqueKey)
       const taskReference = await resolveTask(todoUniqueKey, todo)
@@ -50,6 +54,10 @@ export async function reconcileTasks(todos: ITodo[]) {
       )
       continue
     }
+    // TODO: Isolate error when updating tasks
+    // Failure to update a task should not prevent the action from progressing forward.
+    // We can simply skip processing this task for now.
+    // Since this script is designed to be idempotent, it can be retried later.
     const {
       title,
       body,
@@ -79,6 +87,10 @@ export async function reconcileTasks(todos: ITodo[]) {
       'TODO for task "%s" is gone -- completing task!',
       task.taskReference,
     )
+    // TODO: Isolate error when completing tasks
+    // Failure to complete a task should not prevent the action from progressing forward.
+    // We can simply skip processing this task for now.
+    // Since this script is designed to be idempotent, it can be retried later.
     await TaskManagementSystem.completeTask(task.taskReference)
     await task.markAsCompleted()
   }
