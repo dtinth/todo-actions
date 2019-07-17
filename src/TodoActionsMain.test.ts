@@ -71,3 +71,29 @@ it('works', async () => {
   expect(task2.completed).toBe(false)
   expect(task2.title).toBe('Somebody once told me?')
 })
+
+it('skips non default branch', async () => {
+  const world = resetMockWorld()
+
+  // Arrange
+  world.branch = 'featureBranch'
+  world.file(
+    'main.js',
+    `
+      // ${MARKER}: Hello world
+      // This is great!
+
+      <!--
+        - ${MARKER}:
+        - Somebody once told me
+        - the world is gonna roll me
+        -->
+    `,
+  )
+
+  // Act
+  await runMain()
+
+  // Assert
+  expect(world.commits.length).toEqual(0)
+})
