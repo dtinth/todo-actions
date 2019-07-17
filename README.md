@@ -42,7 +42,52 @@ Turn TODO comments inside source code into GitHub issues and closes them when th
 
 ## Usage
 
-Stay tuned!
+### What you need
+
+- [**GitHub Actions Beta Access**](https://github.com/features/actions) \
+  [Sign up for the beta here](https://github.com/features/actions/signup/).
+  Note that this is per-user and per-organization.
+
+- **A running MongoDB instance** \
+  You can get a free instance on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+  The same MongoDB database can be used with multiple repositories.
+
+### Setting up
+
+1. Go to the [todo-actions GitHub Marketplace page](https://github.com/marketplace/actions/todo-actions) and click **“Use latest version.”** Select a repository to install.
+
+   > <img src="./docs/images/install1.png" width="362" alt="Screenshot" />
+
+2. This will bring you to the GitHub workflow editor. Click on **“create a new workflow.”**
+
+   > <img src="./docs/images/install2.png" width="596" alt="Screenshot" />
+
+3. Give the workflow a name, such as TODO.
+
+   > <img src="./docs/images/install3.png" width="720" alt="Screenshot" />
+
+4. You should see a new workflow with `todo-actions` action inside.
+   Click on **“Edit”**.
+
+   > <img src="./docs/images/install4.png" width="720" alt="Screenshot" />
+
+5. Check the **`GITHUB_TOKEN`** secret to allow the action to access your repository.
+   Also click on **“Create a new secret”** to set up MongoDB database.
+
+   > <img src="./docs/images/install5.png" width="426" alt="Screenshot" />
+
+6. Name the secret **`TODO_ACTIONS_MONGO_URL`** and put in the database connection string.
+   Click on **Add secret.**
+
+   > <img src="./docs/images/install6.png" width="426" alt="Screenshot" />
+
+7. You should now see the secrets configured.
+
+   > <img src="./docs/images/install7.png" width="720" alt="Screenshot" />
+
+8. Commit your changes. You should see the workflow running on GitHub under **Actions** tab.
+
+   > <img src="./docs/images/install8.png" width="720" alt="Screenshot" />
 
 ## Development
 
