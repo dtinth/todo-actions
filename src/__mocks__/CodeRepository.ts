@@ -1,3 +1,5 @@
+import { mockWorld } from './World'
+
 type Real = typeof import('../CodeRepository')
 
 export const repoContext: Real['repoContext'] = {
@@ -8,5 +10,20 @@ export const repoContext: Real['repoContext'] = {
 }
 
 export const scanCodeRepository: Real['scanCodeRepository'] = async () => {
-  throw new Error('!!!')
+  return {
+    files: [...mockWorld.files.values()],
+    isOnDefaultBranch: mockWorld.branch === repoContext.defaultBranch,
+    async saveChanges(commitMessage) {
+      if (![...mockWorld.files.values()].some(f => f.contents.changed)) return
+      mockWorld.commits.push({
+        message: commitMessage,
+        files: new Map(
+          [...mockWorld.files.values()].map(f => [
+            f.fileName,
+            f.contents.toString(),
+          ]),
+        ),
+      })
+    },
+  }
 }

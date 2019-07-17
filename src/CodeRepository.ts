@@ -1,10 +1,8 @@
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
-import { ITodo, IFile } from './types'
+import { IFile } from './types'
 import { File } from './File'
-
-import * as TodoParser from './TodoParser'
 
 const log = logger('CodeRepository')
 
@@ -46,7 +44,6 @@ export const repoContext = {
 }
 
 type CodeRepositoryState = {
-  todoComments: ITodo[]
   files: IFile[]
   isOnDefaultBranch: boolean
   saveChanges(commitMessage: string): Promise<void>
@@ -59,21 +56,13 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   })
     .split('\n')
     .filter(name => name)
-
-  const todoComments = []
   const files: IFile[] = []
   log.info('Parsing TODO tags...')
   for (const filePath of filesWithTodoMarker) {
-    // TODO [#22]: Implement ignoring paths
-    if (filePath === 'README.md') continue
     const file = new File(filePath)
-    const todos = TodoParser.parseTodos(file)
-    log.info('%s: %s found', filePath, todos.length)
-    todoComments.push(...todos)
     files.push(file)
   }
   return {
-    todoComments,
     files,
     isOnDefaultBranch:
       execSync('git rev-parse --abbrev-ref HEAD', {

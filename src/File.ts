@@ -35,7 +35,9 @@ export class MockFile implements IFile {
     this.contents = new FileContents(contents)
   }
 
-  save() {}
+  save() {
+    this.contents.changed = false
+  }
 }
 
 export class FileContents implements IFileContents {

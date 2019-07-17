@@ -1,26 +1,45 @@
+import { mockWorld } from './World'
+
 type Real = typeof import('../DataStore')
 
 export const beginTaskResolution: Real['beginTaskResolution'] = async (
   todoUniqueKey,
   repositoryId,
 ) => {
-  throw new Error('!!!')
-  // log.debug(
-  //   'Found already-existing identifier %s for TODO %s.',
-  //   task.value.taskReference,
-  //   todoUniqueKey,
-  // )
-  // return { existingTaskReference: task.value.taskReference }
+  const existing = mockWorld.store.find(entry => entry._id === todoUniqueKey)
+  if (existing) {
+    return { existingTaskReference: existing.reference }
+  }
 
   return {
     async acquireTaskCreationLock() {
       return {
-        async finish(taskReference, state) {},
+        async finish(taskReference, state) {
+          mockWorld.store.push({
+            _id: todoUniqueKey,
+            reference: taskReference,
+            state: state,
+            completed: false,
+          })
+        },
       }
     },
   }
 }
 
 export const findAllUncompletedTasks: Real['findAllUncompletedTasks'] = async repositoryId => {
-  throw new Error('!!!')
+  return mockWorld.store
+    .filter(entry => !entry.completed)
+    .map(entry => {
+      return {
+        taskReference: entry.reference,
+        state: entry.state,
+        async markAsCompleted() {
+          entry.completed = true
+        },
+        async updateState(newState) {
+          entry.state = newState
+        },
+      }
+    })
 }

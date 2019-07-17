@@ -1,7 +1,9 @@
 import { invariant } from 'tkt'
 import { logger } from 'tkt'
 import { ObjectId } from 'bson'
+import { ITodo } from './types'
 
+import * as TodoParser from './TodoParser'
 import * as TaskUpdater from './TaskUpdater'
 import * as CodeRepository from './CodeRepository'
 
@@ -10,10 +12,20 @@ const log = logger('main')
 export async function runMain() {
   log.info('Search for files with TODO tags...')
   const {
-    todoComments,
+    files,
     saveChanges,
     isOnDefaultBranch,
   } = await CodeRepository.scanCodeRepository()
+
+  const todoComments: ITodo[] = []
+  for (const file of files) {
+    // TODO [#22]: Implement ignoring paths
+    if (file.fileName === 'README.md') continue
+    const todos = TodoParser.parseTodos(file)
+    log.info('%s: %s found', file.fileName, todos.length)
+    todoComments.push(...todos)
+  }
+
   log.info('Total TODOs found: %s', todoComments.length)
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
