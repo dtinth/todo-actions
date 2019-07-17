@@ -45,6 +45,11 @@ it('works', async () => {
     'Somebody once told me',
   ])
 
+  // Idempotent check
+  await runMain()
+  expect(world.commits.length).toEqual(2)
+  expect(world.tasks.length).toEqual(2)
+
   // Round 2: Arrange
   const task1 = world.tasks.find(t => t.title === 'Hello world')!
   const task2 = world.tasks.find(t => t.title === 'Somebody once told me')!

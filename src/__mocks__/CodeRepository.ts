@@ -10,19 +10,16 @@ export const repoContext: Real['repoContext'] = {
 }
 
 export const scanCodeRepository: Real['scanCodeRepository'] = async () => {
+  const files = [...mockWorld.files.values()]
   return {
-    files: [...mockWorld.files.values()],
+    files: files,
     isOnDefaultBranch: mockWorld.branch === repoContext.defaultBranch,
     async saveChanges(commitMessage) {
-      if (![...mockWorld.files.values()].some(f => f.contents.changed)) return
+      if (!files.some(f => f.contents.changed)) return
+      files.forEach(f => f.save())
       mockWorld.commits.push({
         message: commitMessage,
-        files: new Map(
-          [...mockWorld.files.values()].map(f => [
-            f.fileName,
-            f.contents.toString(),
-          ]),
-        ),
+        files: new Map(files.map(f => [f.fileName, f.contents.toString()])),
       })
     },
   }
