@@ -1,7 +1,7 @@
 FROM node:12.6.0
 
-LABEL "com.github.actions.name"="TODO"
-LABEL "com.github.actions.description"="Convert TODO comments to issues"
+LABEL "com.github.actions.name"="todo-actions"
+LABEL "com.github.actions.description"="Convert TODO comments into issues"
 LABEL "com.github.actions.icon"="alert-circle"
 LABEL "com.github.actions.color"="gray-dark"
 
