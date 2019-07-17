@@ -37,6 +37,8 @@ it('works', async () => {
   expect(world.commits[1].files.get('main.js')).toMatch(
     new RegExp(`${MARKER} \\[#\\d+\\]: Hello world`),
   )
+  expect(world.commits[1].message).toMatch(/#1/)
+  expect(world.commits[1].message).toMatch(/#2/)
 
   // Round 1: Assert tasks
   expect(world.tasks.length).toEqual(2)

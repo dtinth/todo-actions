@@ -9,6 +9,7 @@ import * as TaskInformationGenerator from './TaskInformationGenerator'
 const log = logger('TaskUpdater')
 
 export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
+  const references: string[] = []
   for (const todo of todos) {
     const reference =
       todo.reference || invariant(false, 'Unexpected unidentified TODO marker')
@@ -19,8 +20,10 @@ export async function ensureAllTodosAreAssociated(todos: ITodo[]) {
       const taskReference = await resolveTask(todoUniqueKey, todo)
       log.debug('Resolved TODO %s => task %s', todoUniqueKey, taskReference)
       todo.reference = taskReference
+      references.push(taskReference)
     }
   }
+  return references
 }
 
 export async function reconcileTasks(todos: ITodo[]) {
