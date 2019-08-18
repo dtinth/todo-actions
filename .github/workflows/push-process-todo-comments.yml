@@ -1,0 +1,13 @@
+on: push
+name: Process TODO comments
+jobs:
+  collectTODO:
+    name: Collect TODO
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Collect TODO
+      uses: ./
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TODO_ACTIONS_MONGO_URL: ${{ secrets.TODO_ACTIONS_MONGO_URL }}

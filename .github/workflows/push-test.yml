@@ -1,0 +1,20 @@
+on: push
+name: Test
+jobs:
+  yarnInstall:
+    name: yarn install
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: yarn install
+      uses: Borales/actions-yarn@7f2a9167277e57a749fc97441aec0056d2b13948
+      with:
+        args: install
+    - name: typecheck
+      uses: Borales/actions-yarn@7f2a9167277e57a749fc97441aec0056d2b13948
+      with:
+        args: tsc
+    - name: test
+      uses: Borales/actions-yarn@7f2a9167277e57a749fc97441aec0056d2b13948
+      with:
+        args: test
