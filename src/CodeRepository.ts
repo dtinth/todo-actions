@@ -79,9 +79,10 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
-      execSync('git push origin $(git rev-parse --abbrev-ref HEAD)', {
-        stdio: 'inherit',
-      })
+      execSync(
+        'git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" "$GITHUB_REF"',
+        { stdio: 'inherit' },
+      )
     },
   }
 }
