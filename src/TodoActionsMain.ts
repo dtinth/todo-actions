@@ -11,11 +11,7 @@ const log = logger('main')
 
 export async function runMain() {
   log.info('Search for files with TODO tags...')
-  const {
-    files,
-    saveChanges,
-    isOnDefaultBranch,
-  } = await CodeRepository.scanCodeRepository()
+  const { files, saveChanges } = await CodeRepository.scanCodeRepository()
 
   const todoComments: ITodo[] = []
   for (const file of files) {
@@ -29,11 +25,6 @@ export async function runMain() {
   log.info('Total TODOs found: %s', todoComments.length)
   const todosWithoutReference = todoComments.filter(todo => !todo.reference)
   log.info('TODOs without references: %s', todosWithoutReference.length)
-
-  if (!isOnDefaultBranch) {
-    log.info('Not on default branch -- aborting.')
-    return
-  }
 
   if (todosWithoutReference.length > 0) {
     for (const todo of todosWithoutReference) {

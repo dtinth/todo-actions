@@ -45,7 +45,6 @@ export const repoContext = {
 
 type CodeRepositoryState = {
   files: IFile[]
-  isOnDefaultBranch: boolean
   saveChanges(commitMessage: string): Promise<void>
 }
 
@@ -64,10 +63,6 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   }
   return {
     files,
-    isOnDefaultBranch:
-      execSync('git rev-parse --abbrev-ref HEAD', {
-        encoding: 'utf8',
-      }).trim() === repoContext.defaultBranch,
     async saveChanges(commitMessage) {
       const changedFiles = files.filter(file => file.contents.changed)
       log.info('Files changed: %s', changedFiles.length)

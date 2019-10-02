@@ -13,7 +13,6 @@ export const scanCodeRepository: Real['scanCodeRepository'] = async () => {
   const files = [...mockWorld.files.values()]
   return {
     files: files,
-    isOnDefaultBranch: mockWorld.branch === repoContext.defaultBranch,
     async saveChanges(commitMessage) {
       if (!files.some(f => f.contents.changed)) return
       files.forEach(f => f.save())
