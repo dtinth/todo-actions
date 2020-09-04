@@ -42,52 +42,56 @@ Turn TODO comments inside source code into GitHub issues and closes them when th
 
 ## Usage
 
-### What you need
+### Before You Start
 
-- [**GitHub Actions Beta Access**](https://github.com/features/actions) \
-  [Sign up for the beta here](https://github.com/features/actions/signup/).
-  Note that this is per-user and per-organization.
+**Before you begin, you'll need a running MongoDB instance** This action uses MongoDB to keep track of TODO comments and their associated issues.
 
-- **A running MongoDB instance** \
-  You can get a free instance on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-  The same MongoDB database can be used with multiple repositories.
+You can get a free instance on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). The same MongoDB database can be used with multiple repositories.
+
+1. Once you have a MongoDB instance running, you need to get a URL (known as a “connection string on MongoDB’s Cloud service) to connect to your database. Follow [MongoDB’s instructions](https://docs.atlas.mongodb.com/connect-to-cluster/) for how to connect to a cluster.
+2. Once you have the connection string, copy it and go to your repository’s “Settings” tab, then to “Secrets”
+   > ![Screenshot of a repository’s “Secrets” page, inside the Settings tab.](./docs/images/github_secrets_screenshot.png)
+3. Click “Add a new secret”, give it the name TODO_ACTIONS_MONGO_URL, and paste in the MongoDB connection sctring.
 
 ### Setting up
 
-1. Go to the [todo-actions GitHub Marketplace page](https://github.com/marketplace/actions/todo-actions) and click **“Use latest version.”** Select a repository to install.
+1. In the repository where you want to set up this action, click the “Actions” tab
 
-   > <img src="./docs/images/install1.png" width="362" alt="Screenshot" />
+   > <img src="./docs/images/install1.png" alt="Screenshot of a repository's navigation tabs, with “Actions” highlighted" />
 
-2. This will bring you to the GitHub workflow editor. Click on **“create a new workflow.”**
+2. On the Actions page, click “Set up a workflow yourself”
+   (If you already have actions set up, click “New workflow” in the left sidebar first.)
 
-   > <img src="./docs/images/install2.png" width="596" alt="Screenshot" />
+   > <img src="./docs/images/install2.png" alt="The “Actions” page for a repository, with an outline drawn around the “Set up a workflow yourself” button" />
 
-3. Give the workflow a name, such as TODO.
+3. This will bring you to the GitHub workflow editor. Copy the below code into the editor:
 
-   > <img src="./docs/images/install3.png" width="720" alt="Screenshot" />
+   ```yml
+   name: Create issues from todos
 
-4. You should see a new workflow with `todo-actions` action inside.
-   Click on **“Edit”**.
+   on:
+     push:
+       branches:
+        - master
 
-   > <img src="./docs/images/install4.png" width="720" alt="Screenshot" />
+   jobs:
+     todos:
+       runs-on: ubuntu-latest
 
-5. Check the **`GITHUB_TOKEN`** secret to allow the action to access your repository.
-   Also click on **“Create a new secret”** to set up MongoDB database.
+         steps:
+           - uses: actions/checkout@v1
+           - name: todo-actions
+             uses: dtinth/todo-actions@master
+             env:
+               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+               TODO_ACTIONS_MONGO_URL: ${{ secrets.TODO_ACTIONS_MONGO_URL }}
+   ```
 
-   > <img src="./docs/images/install5.png" width="426" alt="Screenshot" />
+   _Recommended: Rename `main.yml` to something else, such as `todos.yml`_
 
-6. Name the secret **`TODO_ACTIONS_MONGO_URL`** and put in the database connection string.
-   Click on **Add secret.**
+4. Complete the workflow creation by clicking “Start commit” and committing the new `yml` file to your repo.
 
-   > <img src="./docs/images/install6.png" width="426" alt="Screenshot" />
-
-7. You should now see the secrets configured.
-
-   > <img src="./docs/images/install7.png" width="720" alt="Screenshot" />
-
-8. Commit your changes. You should see the workflow running on GitHub under **Actions** tab.
-
-   > <img src="./docs/images/install8.png" width="720" alt="Screenshot" />
+5. Commit your changes. You should see the workflow running on GitHub under **Actions** tab.
 
 ## Development
 
