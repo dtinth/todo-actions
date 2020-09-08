@@ -1,10 +1,10 @@
-import { runMain } from './TodoActionsMain'
-import { resetMockWorld } from './__mocks__/World'
+import { runMain } from '../src/TodoActionsMain'
+import { resetMockWorld } from '../src/__mocks__/World'
 import sortBy from 'lodash.sortby'
 
-jest.mock('./DataStore')
-jest.mock('./CodeRepository')
-jest.mock('./TaskManagementSystem')
+jest.mock('../src/DataStore')
+jest.mock('../src/CodeRepository')
+jest.mock('../src/TaskManagementSystem')
 
 const MARKER = 'TODO'
 

@@ -1,0 +1,29 @@
+name: 'Todo Actions'
+description: 'Convert TODO comments into issues'
+
+inputs:
+  collect_commit_msg:
+    description: 'Commit message of collecting issues'
+    default: 'Collect TODO comments'
+  collect_commit_body:
+    description: 'Commit body of collecting issues'
+    default: ''
+
+  reference_commit_msg:
+    description: 'Commit message of referencing issues'
+    default: 'Update TODO references: %s'
+  reference_commit_body:
+    description: 'Commit body of referencing issues'
+    default: ''
+
+  token:
+    description: 'Used to commit changes and open issues'
+    default: ${{ github.token }}
+
+  branch:
+    description: 'Working branch'
+    default: 'master'
+
+runs:
+  using: 'node12'
+  main: 'dist/CLIEntrypoint.js'

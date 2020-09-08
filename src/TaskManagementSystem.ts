@@ -46,7 +46,7 @@ export async function createTask(
 }
 
 export async function completeTask(taskReference: string): Promise<void> {
-  const Octokit = (await import('@octokit/rest')).default
+  const { Octokit } =  (await import('@octokit/rest')).default
   const octokit = new Octokit({
     auth: `token ${process.env.GITHUB_TOKEN ||
       invariant(false, 'Required GITHUB_TOKEN variable.')}`,
@@ -64,7 +64,7 @@ export async function updateTask(
   taskReference: string,
   information: TaskInformation,
 ): Promise<void> {
-  const Octokit = (await import('@octokit/rest')).default
+  const { Octokit } =  (await import('@octokit/rest')).default
   const octokit = new Octokit({
     auth: `token ${process.env.GITHUB_TOKEN ||
       invariant(false, 'Required GITHUB_TOKEN variable.')}`,
