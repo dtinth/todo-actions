@@ -22,4 +22,4 @@ inputs:
 
 runs:
   using: 'node12'
-  main: 'dist/CLIEntrypoint.js'
+  main: 'dist/index.js'
