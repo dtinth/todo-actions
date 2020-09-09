@@ -405,6 +405,7 @@ const core_1 = __webpack_require__(6432);
 const crypto_1 = __webpack_require__(6417);
 const CodeRepository_1 = __webpack_require__(2121);
 const tkt_1 = __webpack_require__(9508);
+const graphql_1 = __webpack_require__(8467);
 const owner = CodeRepository_1.repoContext.repositoryOwner;
 const repo = CodeRepository_1.repoContext.repositoryName;
 const branch = core_1.getInput('branch') || CodeRepository_1.repoContext.defaultBranch;
@@ -419,14 +420,8 @@ function fetchCommit() {
             return '';
         }
         cache = '';
-        const graphql = __webpack_require__(8467).defaults({
-            headers: {
-                authorization: `token ${process.env.GITHUB_TOKEN ||
-                    tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
-            },
-        });
         try {
-            const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = yield graphql(`{
+            const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = yield graphql_1.graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
         ref(qualifiedName: "${branch}") {
           target {
@@ -440,7 +435,12 @@ function fetchCommit() {
           }
         }
       }
-    }`);
+    }`, {
+                headers: {
+                    authorization: `token ${process.env.GITHUB_TOKEN ||
+                        tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+                },
+            });
             cache = oid;
         }
         catch (_a) { }

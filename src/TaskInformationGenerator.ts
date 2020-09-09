@@ -3,6 +3,7 @@ import { ITodo, ITaskState } from './types'
 import { createHash } from 'crypto'
 import { repoContext } from './CodeRepository'
 import { invariant } from 'tkt'
+import { graphql } from '@octokit/graphql'
 
 type TaskInformation = {
   state: ITaskState
@@ -27,13 +28,6 @@ async function fetchCommit(): Promise<string> {
 
   cache = ''
 
-  const graphql = require('@octokit/graphql').defaults({
-    headers: {
-      authorization: `token ${process.env.GITHUB_TOKEN ||
-        invariant(false, 'Required GITHUB_TOKEN variable.')}`,
-    },
-  })
-
   try {
     const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = await graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
@@ -49,7 +43,12 @@ async function fetchCommit(): Promise<string> {
           }
         }
       }
-    }`)
+    }`, {
+      headers: {
+        authorization: `token ${process.env.GITHUB_TOKEN ||
+          invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+      },
+    })
 
     cache = oid
   } catch {}
