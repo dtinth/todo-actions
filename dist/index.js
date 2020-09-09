@@ -729,7 +729,7 @@ function runMain() {
         }
         // Update all the tasks according to the TODO state.
         const associated = yield TaskUpdater.ensureAllTodosAreAssociated(todoComments);
-        yield saveChanges(core_1.getInput('collect_commit_msg').replace('%s', associated.join(', ')), core_1.getInput('collect_commit_body').replace('%s', associated.join(', ')));
+        yield saveChanges(core_1.getInput('reference_commit_msg').replace(/%s/, associated.join(', ')), core_1.getInput('reference_commit_body').replace(/%s/, associated.join(', ')));
         // Reconcile all tasks
         yield TaskUpdater.reconcileTasks(todoComments);
     });
