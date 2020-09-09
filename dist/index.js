@@ -386,44 +386,97 @@ exports.currentProcessId = new bson_1.ObjectId().toHexString();
 /***/ }),
 
 /***/ 5720:
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 "use strict";
 
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.generateTaskInformationFromTodo = void 0;
+const core_1 = __webpack_require__(6432);
 const crypto_1 = __webpack_require__(6417);
 const CodeRepository_1 = __webpack_require__(2121);
+const tkt_1 = __webpack_require__(9508);
+const owner = CodeRepository_1.repoContext.repositoryOwner;
+const repo = CodeRepository_1.repoContext.repositoryName;
+const branch = core_1.getInput('branch') || CodeRepository_1.repoContext.defaultBranch;
+let cache = 'meh';
+function fetchCommit() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (cache !== 'meh') {
+            return cache;
+        }
+        // Some random check to filter out tests
+        if (!('TODO_ACTIONS_MONGO_URL' in process.env)) {
+            return '';
+        }
+        cache = '';
+        const graphql = __webpack_require__(8467).defaults({
+            headers: {
+                authorization: `token ${process.env.GITHUB_TOKEN ||
+                    tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+            },
+        });
+        try {
+            const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = yield graphql(`{
+      repository(name: "${repo}", owner: "${owner}") {
+        ref(qualifiedName: "${branch}") {
+          target {
+            ... on Commit {
+              history(first: 1) {
+                nodes {
+                  oid
+                }
+              }
+            }
+          }
+        }
+      }
+    }`);
+            cache = oid;
+        }
+        catch (_a) { }
+        return cache;
+    });
+}
 function generateTaskInformationFromTodo(todo) {
-    const title = todo.title;
-    const file = todo.file.fileName;
-    // TODO [#31]: Also link to end line in addition to just the starting line.
-    // This requires changing `IFile` interface and `File` class to also keep track of where the TODO comment ends.
-    const line = todo.startLine;
-    const owner = CodeRepository_1.repoContext.repositoryOwner;
-    const repo = CodeRepository_1.repoContext.repositoryName;
-    const defaultBranch = CodeRepository_1.repoContext.defaultBranch;
-    const url = `https://github.com/${owner}/${repo}/blob/${defaultBranch}/${file}#L${line}`;
-    const link = `[${file}:${line}](${url})`;
-    const body = [
-        todo.body,
-        '',
-        '---',
-        `_` +
-            `This issue has been automatically created by [todo-actions](https://github.com/apps/todo-actions) based on a TODO comment found in ${link}. ` +
-            `It will automatically be closed when the TODO comment is removed from the default branch (${defaultBranch}).` +
-            `_`,
-    ].join('\n');
-    return {
-        state: {
-            hash: crypto_1.createHash('md5')
-                .update(title)
-                .update(body)
-                .digest('hex'),
-        },
-        title,
-        body,
-    };
+    return __awaiter(this, void 0, void 0, function* () {
+        const title = todo.title;
+        const file = todo.file.fileName;
+        // TODO [#31]: Also link to end line in addition to just the starting line.
+        // This requires changing `IFile` interface and `File` class to also keep track of where the TODO comment ends.
+        const line = todo.startLine;
+        const commit = yield fetchCommit();
+        const url = `https://github.com/${owner}/${repo}/blob/${commit || branch}/${file}#L${line}`;
+        const link = `[${file}:${line}](${url})`;
+        const body = [
+            todo.body,
+            '',
+            '---',
+            `_` +
+                `This issue has been automatically created by [todo-actions](https://github.com/apps/todo-actions) based on a TODO comment found in ${link}. ` +
+                `It will automatically be closed when the TODO comment is removed from ${branch}.` +
+                `_`,
+        ].join('\n');
+        return {
+            state: {
+                hash: crypto_1.createHash('md5')
+                    .update(title)
+                    .update(body)
+                    .digest('hex'),
+            },
+            title,
+            body,
+        };
+    });
 }
 exports.generateTaskInformationFromTodo = generateTaskInformationFromTodo;
 
@@ -617,7 +670,7 @@ function reconcileTasks(todos) {
             // Failure to update a task should not prevent the action from progressing forward.
             // We can simply skip processing this task for now.
             // Since this script is designed to be idempotent, it can be retried later.
-            const { title, body, state, } = TaskInformationGenerator.generateTaskInformationFromTodo(todo);
+            const { title, body, state, } = yield TaskInformationGenerator.generateTaskInformationFromTodo(todo);
             if (task.state.hash !== state.hash) {
                 log.info('Hash for "%s" changed: "%s" => "%s" -- must update task.', reference, task.state.hash, state.hash);
                 yield TaskManagementSystem.updateTask(reference, { title, body });
@@ -649,7 +702,7 @@ function resolveTask(todoUniqueKey, todo) {
         }
         const taskCreationLock = yield resolution.acquireTaskCreationLock();
         log.debug('Lock acquired. Now creating task for TODO %s.', todoUniqueKey);
-        const { title, body, state, } = TaskInformationGenerator.generateTaskInformationFromTodo(todo);
+        const { title, body, state, } = yield TaskInformationGenerator.generateTaskInformationFromTodo(todo);
         const taskReference = yield TaskManagementSystem.createTask({ title, body });
         taskCreationLock.finish(taskReference, state);
         return taskReference;
