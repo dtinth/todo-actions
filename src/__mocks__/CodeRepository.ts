@@ -13,11 +13,11 @@ export const scanCodeRepository: Real['scanCodeRepository'] = async () => {
   const files = [...mockWorld.files.values()]
   return {
     files: files,
-    async saveChanges(commitMessage) {
+    async saveChanges(commitMessage, commitBody) {
       if (!files.some(f => f.contents.changed)) return
       files.forEach(f => f.save())
       mockWorld.commits.push({
-        message: commitMessage,
+        message: `${commitMessage}\n\n${commitBody}`,
         files: new Map(files.map(f => [f.fileName, f.contents.toString()])),
       })
     },

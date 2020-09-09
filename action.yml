@@ -16,10 +16,6 @@ inputs:
     description: 'Commit body of referencing issues'
     default: ''
 
-  token:
-    description: 'Used to commit changes and open issues'
-    default: ${{ github.token }}
-
   branch:
     description: 'Working branch'
     default: 'master'

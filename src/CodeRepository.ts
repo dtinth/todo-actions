@@ -45,7 +45,7 @@ export const repoContext = {
 
 type CodeRepositoryState = {
   files: IFile[]
-  saveChanges(commitMessage: string): Promise<void>
+  saveChanges(commitMessage: string, commitBody: string): Promise<void>
 }
 
 export async function scanCodeRepository(): Promise<CodeRepositoryState> {
@@ -63,7 +63,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   }
   return {
     files,
-    async saveChanges(commitMessage) {
+    async saveChanges(commitMessage, commitBody) {
       const changedFiles = files.filter(file => file.contents.changed)
       log.info('Files changed: %s', changedFiles.length)
       if (changedFiles.length === 0) {
@@ -73,7 +73,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
         file.save()
       }
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
-      execFileSync('git', ['commit', '-m', commitMessage], {
+      execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
         stdio: 'inherit',
       })
       if (!process.env.GITHUB_TOKEN) {

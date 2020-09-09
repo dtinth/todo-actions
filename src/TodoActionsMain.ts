@@ -1,3 +1,4 @@
+import { getInput } from '@actions/core'
 import { invariant } from 'tkt'
 import { logger } from 'tkt'
 import { ObjectId } from 'bson'
@@ -30,7 +31,7 @@ export async function runMain() {
     for (const todo of todosWithoutReference) {
       todo.reference = `$${new ObjectId().toHexString()}`
     }
-    await saveChanges('Collect TODO comments')
+    await saveChanges(getInput('collect_commit_msg'), getInput('collect_commit_body'))
   }
 
   // Every TODO must have a reference by now.
@@ -45,7 +46,11 @@ export async function runMain() {
 
   // Update all the tasks according to the TODO state.
   const associated = await TaskUpdater.ensureAllTodosAreAssociated(todoComments)
-  await saveChanges('Update TODO references: ' + associated.join(', '))
+
+  await saveChanges(
+    getInput('reference_commit_msg').replace(/%s/, associated.join(', ')), 
+    getInput('reference_commit_body').replace(/%s/, associated.join(', '))
+  )
 
   // Reconcile all tasks
   await TaskUpdater.reconcileTasks(todoComments)

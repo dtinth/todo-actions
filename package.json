@@ -19,10 +19,12 @@
     "all": "npm run build && npm run package && npm test"
   },
   "dependencies": {
+    "@actions/core": "^1.2.5",
     "@octokit/graphql": "^4.5.4",
     "@octokit/rest": "^18.0.5",
     "@vercel/ncc": "^0.24.0",
     "dotenv": "^8.2.0",
+    "js-yaml": "^3.14.0",
     "lodash.sortby": "^4.7.0",
     "mongodb": "^3.6.1",
     "tkt": "2.0.0"
