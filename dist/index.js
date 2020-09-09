@@ -519,6 +519,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updateTask = exports.completeTask = exports.createTask = void 0;
 const tkt_1 = __webpack_require__(9508);
+const rest_1 = __webpack_require__(5375);
 const CodeRepository = __importStar(__webpack_require__(2121));
 const log = tkt_1.logger('TaskManagementSystem');
 function createTask(information) {
@@ -553,8 +554,7 @@ function createTask(information) {
 exports.createTask = createTask;
 function completeTask(taskReference) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { Octokit } = (yield Promise.resolve().then(() => __importStar(__webpack_require__(5375)))).default;
-        const octokit = new Octokit({
+        const octokit = new rest_1.Octokit({
             auth: `token ${process.env.GITHUB_TOKEN ||
                 tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
         });
@@ -570,8 +570,7 @@ function completeTask(taskReference) {
 exports.completeTask = completeTask;
 function updateTask(taskReference, information) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { Octokit } = (yield Promise.resolve().then(() => __importStar(__webpack_require__(5375)))).default;
-        const octokit = new Octokit({
+        const octokit = new rest_1.Octokit({
             auth: `token ${process.env.GITHUB_TOKEN ||
                 tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
         });
