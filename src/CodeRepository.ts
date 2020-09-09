@@ -1,3 +1,4 @@
+import { getInput } from '@actions/core'
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
@@ -79,8 +80,10 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
+
+      const ref = getInput('branch') || "$GITHUB_REF"
       execSync(
-        'git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:"$GITHUB_REF"',
+        `git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${ref}`,
         { stdio: 'inherit' },
       )
     },

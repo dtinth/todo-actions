@@ -65,6 +65,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.scanCodeRepository = exports.repoContext = void 0;
+const core_1 = __webpack_require__(6432);
 const fs_1 = __webpack_require__(5747);
 const tkt_1 = __webpack_require__(9508);
 const child_process_1 = __webpack_require__(3129);
@@ -121,7 +122,8 @@ function scanCodeRepository() {
                     if (!process.env.GITHUB_TOKEN) {
                         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`;
                     }
-                    child_process_1.execSync('git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:"$GITHUB_REF"', { stdio: 'inherit' });
+                    const ref = core_1.getInput('branch') || "$GITHUB_REF";
+                    child_process_1.execSync(`git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${ref}`, { stdio: 'inherit' });
                 });
             },
         };
