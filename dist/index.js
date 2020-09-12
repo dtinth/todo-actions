@@ -2277,7 +2277,7 @@ class Octokit {
     //     is unauthenticated. The `this.auth()` method is a no-op and no request hook is registred.
     // (2) If only `options.auth` is set, use the default token authentication strategy.
     // (3) If `options.authStrategy` is set then use it and pass in `options.auth`. Always pass own request as many strategies accept a custom request instance.
-    // TODO: type `options.auth` based on `options.authStrategy`.
+    // TODO [$5f5d4804de140e0a6f8f4def]: type `options.auth` based on `options.authStrategy`.
 
     if (!options.authStrategy) {
       if (!options.auth) {
@@ -2457,7 +2457,7 @@ function omit(object, keysToOmit) {
 }
 
 // Based on https://github.com/bramstein/url-template, licensed under BSD
-// TODO: create separate package.
+// TODO [$5f5d4804de140e0a6f8f4df0]: create separate package.
 //
 // Copyright (c) 2012-2014, Bram Stein
 // All rights reserved.
@@ -6762,7 +6762,7 @@ Decimal128.fromString = function(string) {
   string = string.trim();
 
   // Naively prevent against REDOS attacks.
-  // TODO: implementing a custom parsing for this, or refactoring the regex would yield
+  // TODO [$5f5d4804de140e0a6f8f4df1]: implementing a custom parsing for this, or refactoring the regex would yield
   //       further gains.
   if (string.length >= 7000) {
     throw new Error('' + string + ' not a valid Decimal128 string');
@@ -12314,7 +12314,7 @@ const camelCase = (input, options) => {
 };
 
 module.exports = camelCase;
-// TODO: Remove this for the next major release
+// TODO [$5f5d4804de140e0a6f8f4df2]: Remove this for the next major release
 module.exports.default = camelCase;
 
 
@@ -16752,7 +16752,7 @@ module.exports = Instrumentation;
 //   }
 // }
 
-// TODO: change this to the async generator function above
+// TODO [$5f5d4804de140e0a6f8f4df3]: change this to the async generator function above
 function asyncIterator() {
   const cursor = this;
 
@@ -17003,7 +17003,7 @@ class BulkWriteResult {
         const err = this.result.writeConcernErrors[i];
         errmsg = errmsg + err.errmsg;
 
-        // TODO: Something better
+        // TODO [$5f5d4804de140e0a6f8f4df4]: Something better
         if (i === 0) errmsg = errmsg + ' and ';
       }
 
@@ -17775,7 +17775,7 @@ class BulkOperationBase {
         if (op[key].upsert) operation.upsert = true;
       }
       if (op[key].arrayFilters) {
-        // TODO: this check should be done at command construction against a connection, not a topology
+        // TODO [$5f5d4804de140e0a6f8f4df5]: this check should be done at command construction against a connection, not a topology
         if (maxWireVersion(this.s.topology) < 6) {
           throw new TypeError('arrayFilters are only supported on MongoDB 3.6+');
         }
@@ -19082,7 +19082,7 @@ class Connection extends EventEmitter {
   set ismaster(response) {
     this[kDescription].receiveResponse(response);
 
-    // TODO: remove this, and only use the `StreamDescription` in the future
+    // TODO [$5f5d4804de140e0a6f8f4df6]: remove this, and only use the `StreamDescription` in the future
     this[kIsMaster] = response;
   }
 
@@ -20223,7 +20223,7 @@ class MessageStream extends Duplex {
   }
 
   writeCommand(command, operationDescription) {
-    // TODO: agreed compressor should live in `StreamDescription`
+    // TODO [$5f5d4804de140e0a6f8f4df7]: agreed compressor should live in `StreamDescription`
     const shouldCompress = operationDescription && !!operationDescription.agreedCompressor;
     if (!shouldCompress || !canCompress(command)) {
       const data = command.toBin();
@@ -20903,7 +20903,7 @@ Collection.prototype.find = deprecateOptions(
       newOptions
     );
 
-    // TODO: remove this when NODE-2074 is resolved
+    // TODO [$5f5d4804de140e0a6f8f4df8]: remove this when NODE-2074 is resolved
     if (typeof callback === 'function') {
       callback(null, cursor);
       return;
@@ -22320,7 +22320,7 @@ Collection.prototype.aggregate = function(pipeline, options, callback) {
     options
   );
 
-  // TODO: remove this when NODE-2074 is resolved
+  // TODO [$5f5d4804de140e0a6f8f4df9]: remove this when NODE-2074 is resolved
   if (typeof callback === 'function') {
     callback(null, cursor);
     return;
@@ -23605,7 +23605,7 @@ module.exports = MongoDBAWS;
 const retrieveBSON = __webpack_require__(7746).retrieveBSON;
 const AuthProvider = __webpack_require__(557).AuthProvider;
 
-// TODO: can we get the Binary type from this.bson instead?
+// TODO [$5f5d4804de140e0a6f8f4dfa]: can we get the Binary type from this.bson instead?
 const BSON = retrieveBSON();
 const Binary = BSON.Binary;
 
@@ -27939,7 +27939,7 @@ class CoreCursor extends Readable {
       this.cursorState.lastCursorId = cmd;
     }
 
-    // TODO: remove as part of NODE-2104
+    // TODO [$5f5d4804de140e0a6f8f4dfb]: remove as part of NODE-2104
     if (this.operation) {
       this.operation.cursorState = this.cursorState;
     }
@@ -29348,7 +29348,7 @@ class Monitor extends EventEmitter {
         typeof options.minHeartbeatFrequencyMS === 'number' ? options.minHeartbeatFrequencyMS : 500
     });
 
-    // TODO: refactor this to pull it directly from the pool, requires new ConnectionPool integration
+    // TODO [$5f5d4804de140e0a6f8f4dfc]: refactor this to pull it directly from the pool, requires new ConnectionPool integration
     const connectOptions = Object.assign(
       {
         id: '<monitor>',
@@ -29570,7 +29570,7 @@ function monitorServer(monitor) {
       callback();
     }
 
-    // TODO: the next line is a legacy event, remove in v4
+    // TODO [$5f5d4804de140e0a6f8f4dfd]: the next line is a legacy event, remove in v4
     process.nextTick(() => monitor.emit('monitoring', monitor[kServer]));
 
     checkServer(monitor, (err, isMaster) => {
@@ -30144,7 +30144,7 @@ function executeWriteOperation(args, options, callback) {
   if (typeof options === 'function') (callback = options), (options = {});
   options = options || {};
 
-  // TODO: once we drop Node 4, use destructuring either here or in arguments.
+  // TODO [$5f5d4804de140e0a6f8f4dfe]: once we drop Node 4, use destructuring either here or in arguments.
   const server = args.server;
   const op = args.op;
   const ns = args.ns;
@@ -30472,7 +30472,7 @@ function compareTopologyVersion(lhs, rhs) {
   }
 
   if (lhs.processId.equals(rhs.processId)) {
-    // TODO: handle counters as Longs
+    // TODO [$5f5d4804de140e0a6f8f4dff]: handle counters as Longs
     if (lhs.counter === rhs.counter) {
       return 0;
     } else if (lhs.counter < rhs.counter) {
@@ -31187,7 +31187,7 @@ class Topology extends EventEmitter {
       if (typeof callback === 'function') callback(err, this);
     };
 
-    // TODO: NODE-2471
+    // TODO [$5f5d4804de140e0a6f8f4e00]: NODE-2471
     if (this.s.credentials) {
       this.command('admin.$cmd', { ping: 1 }, { readPreference }, connectHandler);
       return;
@@ -31809,7 +31809,7 @@ function executeWriteOperation(args, options, callback) {
   if (typeof options === 'function') (callback = options), (options = {});
   options = options || {};
 
-  // TODO: once we drop Node 4, use destructuring either here or in arguments.
+  // TODO [$5f5d4804de140e0a6f8f4e01]: once we drop Node 4, use destructuring either here or in arguments.
   const topology = args.topology;
   const op = args.op;
   const ns = args.ns;
@@ -32072,7 +32072,7 @@ class TopologyDescription {
   ) {
     options = options || {};
 
-    // TODO: consider assigning all these values to a temporary value `s` which
+    // TODO [$5f5d4804de140e0a6f8f4e02]: consider assigning all these values to a temporary value `s` which
     //       we use `Object.freeze` on, ensuring the internal state of this type
     //       is immutable.
     this.type = topologyType || TopologyType.Unknown;
@@ -33141,7 +33141,7 @@ class ServerSessionPool {
   }
 }
 
-// TODO: this should be codified in command construction
+// TODO [$5f5d4804de140e0a6f8f4e03]: this should be codified in command construction
 // @see https://github.com/mongodb/specifications/blob/master/source/read-write-concern/read-write-concern.rst#read-concern
 function commandSupportsReadConcern(command, options) {
   if (
@@ -33180,7 +33180,7 @@ function commandSupportsReadConcern(command, options) {
  */
 function applySession(session, command, options) {
   if (session.hasEnded) {
-    // TODO: merge this with `assertAlive`, did not want to throw a try/catch here
+    // TODO [$5f5d4804de140e0a6f8f4e04]: merge this with `assertAlive`, did not want to throw a try/catch here
     return new MongoError('Cannot use a session that has ended');
   }
 
@@ -33208,7 +33208,7 @@ function applySession(session, command, options) {
       session.transaction.transition(TxnState.NO_TRANSACTION);
     }
 
-    // TODO: the following should only be applied to read operation per spec.
+    // TODO [$5f5d4804de140e0a6f8f4e05]: the following should only be applied to read operation per spec.
     // for causal consistency
     if (session.supports.causalConsistency && session.operationTime && shouldApplyReadConcern) {
       command.readConcern = command.readConcern || {};
@@ -33738,7 +33738,7 @@ function connectProxies(self, servers) {
 }
 
 function pickProxy(self, session) {
-  // TODO: Destructure :)
+  // TODO [$5f5d4804de140e0a6f8f4e06]: Destructure :)
   const transaction = session && session.transaction;
 
   if (transaction && transaction.server) {
@@ -34180,7 +34180,7 @@ function executeWriteOperation(args, options, callback) {
   if (typeof options === 'function') (callback = options), (options = {});
   options = options || {};
 
-  // TODO: once we drop Node 4, use destructuring either here or in arguments.
+  // TODO [$5f5d4804de140e0a6f8f4e07]: once we drop Node 4, use destructuring either here or in arguments.
   const self = args.self;
   const op = args.op;
   const ns = args.ns;
@@ -36128,7 +36128,7 @@ function executeWriteOperation(args, options, callback) {
   if (typeof options === 'function') (callback = options), (options = {});
   options = options || {};
 
-  // TODO: once we drop Node 4, use destructuring either here or in arguments.
+  // TODO [$5f5d4804de140e0a6f8f4e08]: once we drop Node 4, use destructuring either here or in arguments.
   const self = args.self;
   const op = args.op;
   const ns = args.ns;
@@ -38993,7 +38993,7 @@ const SessionMixins = {
       sessions = [sessions];
     }
 
-    // TODO:
+    // TODO [$5f5d4804de140e0a6f8f4e09]:
     //   When connected to a sharded cluster the endSessions command
     //   can be sent to any mongos. When connected to a replica set the
     //   endSessions command MUST be sent to the primary if the primary
@@ -39227,7 +39227,7 @@ class Transaction {
       this.options.maxTimeMS = options.maxCommitTimeMS;
     }
 
-    // TODO: This isn't technically necessary
+    // TODO [$5f5d4804de140e0a6f8f4e0a]: This isn't technically necessary
     this._pinnedServer = undefined;
     this._recoveryToken = undefined;
   }
@@ -42219,7 +42219,7 @@ class Cursor extends CoreCursor {
    * @param {object} [options] Optional settings.
    * @param {function} [options.transform] A transformation method applied to each document emitted by the stream.
    * @return {Cursor}
-   * TODO: replace this method with transformStream in next major release
+   * TODO [$5f5d4804de140e0a6f8f4e0b]: replace this method with transformStream in next major release
    */
   stream(options) {
     this.cursorState.streamOptions = options || {};
@@ -42650,7 +42650,7 @@ Object.defineProperty(Db.prototype, 'readPreference', {
   enumerable: true,
   get: function() {
     if (this.s.readPreference == null) {
-      // TODO: check client
+      // TODO [$5f5d4804de140e0a6f8f4e0c]: check client
       return ReadPreference.primary;
     }
 
@@ -42735,7 +42735,7 @@ Db.prototype.aggregate = function(pipeline, options, callback) {
     options
   );
 
-  // TODO: remove this when NODE-2074 is resolved
+  // TODO [$5f5d4804de140e0a6f8f4e0d]: remove this when NODE-2074 is resolved
   if (typeof callback === 'function') {
     callback(null, cursor);
     return;
@@ -47629,7 +47629,7 @@ class AddUserOperation extends CommandOperation {
     let roles = Array.isArray(options.roles) ? options.roles : [];
 
     // If not roles defined print deprecated message
-    // TODO: handle deprecation properly
+    // TODO [$5f5d4804de140e0a6f8f4e0e]: handle deprecation properly
     if (roles.length === 0) {
       console.log('Creating a user without roles is deprecated in MongoDB >= 2.6');
     }
@@ -48511,7 +48511,7 @@ class CommandOperationV2 extends OperationBase {
       this.fullResponse = true;
     }
 
-    // TODO: A lot of our code depends on having the read preference in the options. This should
+    // TODO [$5f5d4804de140e0a6f8f4e0f]: A lot of our code depends on having the read preference in the options. This should
     //       go away, but also requires massive test rewrites.
     this.options.readPreference = this.readPreference;
 
@@ -48524,7 +48524,7 @@ class CommandOperationV2 extends OperationBase {
   }
 
   executeCommand(server, cmd, callback) {
-    // TODO: consider making this a non-enumerable property
+    // TODO [$5f5d4804de140e0a6f8f4e10]: consider making this a non-enumerable property
     this.server = server;
 
     const options = this.options;
@@ -50123,7 +50123,7 @@ class CreateIndexesOperation extends CommandOperationV2 {
     // createIndexes is always called with an array of index spec objects
     if (!Array.isArray(indexes) || Array.isArray(indexes[0])) {
       this.onlyReturnNameOfCreatedIndex = true;
-      // TODO: remove in v4 (breaking change); make createIndex return full response as createIndexes does
+      // TODO [$5f5d4804de140e0a6f8f4e11]: remove in v4 (breaking change); make createIndex return full response as createIndexes does
 
       const indexParameters = parseIndexOptions(indexes);
       // Generate the index name
@@ -51430,7 +51430,7 @@ function executeWithServerSelection(topology, operation, callback) {
   });
 }
 
-// TODO: This is only supported for unified topology, it should go away once
+// TODO [$5f5d4804de140e0a6f8f4e12]: This is only supported for unified topology, it should go away once
 //       we remove support for legacy topology types.
 function selectServerForSessionSupport(topology, operation, callback) {
   const Promise = topology.s.promiseLibrary;
@@ -51605,7 +51605,7 @@ class FindAndModifyOperation extends OperationBase {
     }
 
     if (options.hint) {
-      // TODO: once this method becomes a CommandOperationV2 we will have the server
+      // TODO [$5f5d4804de140e0a6f8f4e13]: once this method becomes a CommandOperationV2 we will have the server
       // in place to check.
       const unacknowledgedWrite = options.writeConcern && options.writeConcern.w === 0;
       if (unacknowledgedWrite || maxWireVersion(coll.s.topology) < 8) {
@@ -58513,7 +58513,7 @@ const pTry = (fn, ...arguments_) => new Promise(resolve => {
 });
 
 module.exports = pTry;
-// TODO: remove this in the next major version
+// TODO [$5f5d4804de140e0a6f8f4e14]: remove this in the next major version
 module.exports.default = pTry;
 
 
@@ -64384,7 +64384,7 @@ Writable.prototype.pipe = function () {
 
 function writeAfterEnd(stream, cb) {
   var er = new Error('write after end');
-  // TODO: defer error events consistently everywhere, not just the cb
+  // TODO [$5f5d4804de140e0a6f8f4e15]: defer error events consistently everywhere, not just the cb
   stream.emit('error', er);
   pna.nextTick(cb, er);
 }
@@ -71319,7 +71319,7 @@ const YError = __webpack_require__(4401)
 
 const positionName = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth']
 function argsert (expected, callerArguments, length) {
-  // TODO: should this eventually raise an exception.
+  // TODO [$5f5d4804de140e0a6f8f4e16]: should this eventually raise an exception.
   try {
     // preface the argument description with "cmd", so
     // that we can run it through yargs' command parser.
@@ -73390,7 +73390,7 @@ function Yargs (processArgs, cwd, parentRequire) {
     return self
   }
 
-  // TODO: actually deprecate self.defaults.
+  // TODO [$5f5d4804de140e0a6f8f4e17]: actually deprecate self.defaults.
   self.default = self.defaults = function (key, value, defaultDescription) {
     argsert('<object|string|array> [*] [string]', [key, value, defaultDescription], arguments.length)
     if (defaultDescription) options.defaultDescription[key] = defaultDescription
@@ -73510,7 +73510,7 @@ function Yargs (processArgs, cwd, parentRequire) {
     return self
   }
 
-  // TODO: deprecate self.demand in favor of
+  // TODO [$5f5d4804de140e0a6f8f4e18]: deprecate self.demand in favor of
   // .demandCommand() .demandOption().
   self.demand = self.required = self.require = function demand (keys, max, msg) {
     // you can optionally provide a 'max' key,
