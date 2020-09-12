@@ -73,6 +73,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       for (const file of changedFiles) {
         file.save()
       }
+      log.info(`"${commitMessage}"`, `"${commitBody}"`)
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
       execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
         stdio: 'inherit',
