@@ -115,15 +115,22 @@ function scanCodeRepository() {
                     for (const file of changedFiles) {
                         file.save();
                     }
+                    log.info(`"${commitMessage}"`, `"${commitBody}"`);
+                    const env = {
+                        GIT_COMMITTER_NAME: 'TODO',
+                        GIT_AUTHOR_NAME: 'TODO',
+                        GIT_AUTHOR_EMAIL: 'todo-actions[bot]@users.noreply.github.com'
+                    };
                     child_process_1.execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)]);
                     child_process_1.execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
                         stdio: 'inherit',
+                        env
                     });
                     if (!process.env.GITHUB_TOKEN) {
                         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`;
                     }
                     const ref = core_1.getInput('branch') || "$GITHUB_REF";
-                    child_process_1.execSync(`git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${ref}`, { stdio: 'inherit' });
+                    child_process_1.execSync(`git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${ref}`, { stdio: 'inherit', env });
                 });
             },
         };
