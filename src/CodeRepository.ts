@@ -74,9 +74,16 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
         file.save()
       }
       log.info(`"${commitMessage}"`, `"${commitBody}"`)
+
+
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
       execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
         stdio: 'inherit',
+        env: {
+          GIT_COMMITTER_NAME: 'TODO',
+          GIT_AUTHOR_NAME: 'TODO',
+          EMAIL: 'todo-actions[bot]@users.noreply.github.com'
+        }
       })
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
