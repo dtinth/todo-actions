@@ -1,5 +1,6 @@
 import { invariant, logger } from 'tkt'
 import { Octokit } from '@octokit/rest'
+import { graphql } from '@octokit/graphql'
 
 import * as CodeRepository from './CodeRepository'
 
@@ -13,13 +14,7 @@ type TaskInformation = {
 export async function createTask(
   information: TaskInformation,
 ): Promise<string> {
-  const graphql = require('@octokit/graphql').defaults({
-    headers: {
-      authorization: `token ${process.env.GITHUB_TOKEN ||
-        invariant(false, 'Required GITHUB_TOKEN variable.')}`,
-    },
-  })
-  const result = await graphql(
+  const { createIssue } = await graphql(
     `
       mutation CreateIssue($input: CreateIssueInput!) {
         createIssue(input: $input) {
@@ -35,11 +30,14 @@ export async function createTask(
         title: information.title,
         body: information.body,
       },
+      headers: {
+        authorization: `token ${process.env.GITHUB_TOKEN || invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+      },
     },
   )
-  log.debug('Create issue result:', result)
-  return result.createIssue.issue.number
-    ? `#${result.createIssue.issue.number}`
+  log.debug('Create issue result:', createIssue)
+  return createIssue.issue.number
+    ? `#${createIssue.issue.number}`
     : invariant(
         false,
         'Failed to get issue number out of createIssue API call.',

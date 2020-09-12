@@ -76,9 +76,9 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       }
       log.info(`"${commitMessage}"`, `"${commitBody}"`)
 
-      process.env.GIT_COMMITTER_NAME = 'TODO',
-      process.env.GIT_AUTHOR_NAME = 'TODO',
-      process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com',
+      process.env.GIT_COMMITTER_NAME = 'todo-actions'
+      process.env.GIT_AUTHOR_NAME = 'todo-actions'
+      process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com'
 
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
       execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {

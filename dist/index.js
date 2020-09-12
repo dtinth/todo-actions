@@ -117,10 +117,10 @@ function scanCodeRepository() {
                         file.save();
                     }
                     log.info(`"${commitMessage}"`, `"${commitBody}"`);
-                    process.env.GIT_COMMITTER_NAME = 'TODO',
-                        process.env.GIT_AUTHOR_NAME = 'TODO',
-                        process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com',
-                        child_process_1.execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)]);
+                    process.env.GIT_COMMITTER_NAME = 'todo-actions';
+                    process.env.GIT_AUTHOR_NAME = 'todo-actions';
+                    process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com';
+                    child_process_1.execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)]);
                     child_process_1.execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
                         stdio: 'inherit'
                     });
@@ -527,17 +527,12 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.updateTask = exports.completeTask = exports.createTask = void 0;
 const tkt_1 = __webpack_require__(9508);
 const rest_1 = __webpack_require__(5375);
+const graphql_1 = __webpack_require__(8467);
 const CodeRepository = __importStar(__webpack_require__(2121));
 const log = tkt_1.logger('TaskManagementSystem');
 function createTask(information) {
     return __awaiter(this, void 0, void 0, function* () {
-        const graphql = __webpack_require__(8467).defaults({
-            headers: {
-                authorization: `token ${process.env.GITHUB_TOKEN ||
-                    tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
-            },
-        });
-        const result = yield graphql(`
+        const { createIssue } = yield graphql_1.graphql(`
       mutation CreateIssue($input: CreateIssueInput!) {
         createIssue(input: $input) {
           issue {
@@ -551,10 +546,13 @@ function createTask(information) {
                 title: information.title,
                 body: information.body,
             },
+            headers: {
+                authorization: `token ${process.env.GITHUB_TOKEN || tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
+            },
         });
-        log.debug('Create issue result:', result);
-        return result.createIssue.issue.number
-            ? `#${result.createIssue.issue.number}`
+        log.debug('Create issue result:', createIssue);
+        return createIssue.issue.number
+            ? `#${createIssue.issue.number}`
             : tkt_1.invariant(false, 'Failed to get issue number out of createIssue API call.');
     });
 }
