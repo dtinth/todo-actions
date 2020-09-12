@@ -89,7 +89,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       }
 
       const ref = getInput('branch') || "$GITHUB_REF"
-      execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${context.repo}.git" HEAD:${ref}`,{ 
+      execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${context.repo.owner}/${context.repo.repo}.git" HEAD:${ref}`,{ 
         stdio: 'inherit' 
       })
     },

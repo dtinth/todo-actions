@@ -128,7 +128,7 @@ function scanCodeRepository() {
                         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`;
                     }
                     const ref = core_1.getInput('branch') || "$GITHUB_REF";
-                    child_process_1.execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${github_1.context.repo}.git" HEAD:${ref}`, {
+                    child_process_1.execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${github_1.context.repo.owner}/${github_1.context.repo.repo}.git" HEAD:${ref}`, {
                         stdio: 'inherit'
                     });
                 });
