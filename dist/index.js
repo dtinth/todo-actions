@@ -119,8 +119,12 @@ function scanCodeRepository() {
                     const env = {
                         GIT_COMMITTER_NAME: 'TODO',
                         GIT_AUTHOR_NAME: 'TODO',
-                        GIT_AUTHOR_EMAIL: 'todo-actions[bot]@users.noreply.github.com'
+                        GIT_AUTHOR_EMAIL: 'todo-actions[bot]@users.noreply.github.com',
+                        EMAIL: 'todo-actions[bot]@users.noreply.github.com'
                     };
+                    for (const [key, value] of Object.values(env)) {
+                        process.env[key] = value;
+                    }
                     child_process_1.execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)]);
                     child_process_1.execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
                         stdio: 'inherit',
