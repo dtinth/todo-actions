@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.2.5",
+    "@actions/github": "^4.0.0",
     "@octokit/graphql": "^4.5.4",
     "@octokit/rest": "^18.0.5",
     "@vercel/ncc": "^0.24.0",

@@ -1,4 +1,5 @@
 import { getInput } from '@actions/core'
+import { context } from '@actions/github'
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
@@ -75,31 +76,22 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       }
       log.info(`"${commitMessage}"`, `"${commitBody}"`)
 
-      const env = {
-        GIT_COMMITTER_NAME: 'TODO',
-        GIT_AUTHOR_NAME: 'TODO',
-        GIT_AUTHOR_EMAIL: 'todo-actions[bot]@users.noreply.github.com',
-        EMAIL: 'todo-actions[bot]@users.noreply.github.com'
-      }
-
-      for (const [key, value] of Object.values(env)) {
-        process.env[key] = value
-      }
+      process.env.GIT_COMMITTER_NAME = 'TODO',
+      process.env.GIT_AUTHOR_NAME = 'TODO',
+      process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com',
 
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
       execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
-        stdio: 'inherit',
-        env
+        stdio: 'inherit'
       })
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
 
       const ref = getInput('branch') || "$GITHUB_REF"
-      execSync(
-        `git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:${ref}`,
-        { stdio: 'inherit', env },
-      )
+      execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${context.repo}.git" HEAD:${ref}`,{ 
+        stdio: 'inherit' 
+      })
     },
   }
 }
