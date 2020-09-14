@@ -31,6 +31,7 @@ async function fetchCommit(): Promise<string> {
 
   cache = ''
 
+  log.info('Fetching commit')
   try {
     const { data } = await graphql(`{
       repository(name: "${repo}", owner: "${owner}") {

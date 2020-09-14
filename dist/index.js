@@ -429,6 +429,7 @@ function fetchCommit() {
             return '';
         }
         cache = '';
+        log.info('Fetching commit');
         try {
             const { data } = yield graphql_1.graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
