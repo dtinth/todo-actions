@@ -431,7 +431,7 @@ function fetchCommit() {
         cache = '';
         log.info('Fetching commit');
         try {
-            const { data } = yield graphql_1.graphql(`{
+            const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = yield graphql_1.graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
         ref(qualifiedName: "${branch}") {
           target {
@@ -451,9 +451,6 @@ function fetchCommit() {
                         tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
                 },
             });
-            console.log(data);
-            const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = data;
-            log.info(`>>= Commit: ${oid}`);
             cache = oid;
         }
         catch (err) {
