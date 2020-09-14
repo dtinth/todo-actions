@@ -467,7 +467,6 @@ function generateTaskInformationFromTodo(todo) {
         // This requires changing `IFile` interface and `File` class to also keep track of where the TODO comment ends.
         const line = todo.startLine;
         const commit = yield fetchCommit();
-        log.info(`last commit: '${commit}'`);
         const url = `https://github.com/${owner}/${repo}/blob/${commit || branch}/${file}#L${line}`;
         const link = `[${file}:${line}](${url})`;
         const body = [
