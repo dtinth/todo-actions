@@ -1,3 +1,5 @@
+import { getInput } from '@actions/core'
+import { context } from '@actions/github'
 import { existsSync, readFileSync } from 'fs'
 import { logger, invariant } from 'tkt'
 import { execSync, execFileSync } from 'child_process'
@@ -45,7 +47,7 @@ export const repoContext = {
 
 type CodeRepositoryState = {
   files: IFile[]
-  saveChanges(commitMessage: string): Promise<void>
+  saveChanges(commitMessage: string, commitBody: string): Promise<void>
 }
 
 export async function scanCodeRepository(): Promise<CodeRepositoryState> {
@@ -63,7 +65,7 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
   }
   return {
     files,
-    async saveChanges(commitMessage) {
+    async saveChanges(commitMessage, commitBody) {
       const changedFiles = files.filter(file => file.contents.changed)
       log.info('Files changed: %s', changedFiles.length)
       if (changedFiles.length === 0) {
@@ -72,17 +74,24 @@ export async function scanCodeRepository(): Promise<CodeRepositoryState> {
       for (const file of changedFiles) {
         file.save()
       }
+      log.info(`"${commitMessage}"`, `"${commitBody}"`)
+
+      process.env.GIT_COMMITTER_NAME = 'todo-actions'
+      process.env.GIT_AUTHOR_NAME = 'todo-actions'
+      process.env.GIT_AUTHOR_EMAIL = 'todo-actions[bot]@users.noreply.github.com'
+
       execFileSync('git', ['add', ...changedFiles.map(file => file.fileName)])
-      execFileSync('git', ['commit', '-m', commitMessage], {
-        stdio: 'inherit',
+      execFileSync('git', ['commit', '-m', commitMessage, '-m', commitBody], {
+        stdio: 'inherit'
       })
       if (!process.env.GITHUB_TOKEN) {
         throw `Maybe you forgot to enable the GITHUB_TOKEN secret?`
       }
-      execSync(
-        'git push "https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git" HEAD:"$GITHUB_REF"',
-        { stdio: 'inherit' },
-      )
+
+      const ref = getInput('branch') || "$GITHUB_REF"
+      execSync(`git push "https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${context.repo.owner}/${context.repo.repo}.git" HEAD:${ref}`,{ 
+        stdio: 'inherit' 
+      })
     },
   }
 }

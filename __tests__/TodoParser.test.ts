@@ -1,5 +1,5 @@
-import { parseTodos } from './TodoParser'
-import { MockFile } from './File'
+import { parseTodos } from '../src/TodoParser'
+import { MockFile } from '../src/File'
 
 const MARKER = 'TODO'
 

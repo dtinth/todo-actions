@@ -1,26 +1,33 @@
 {
   "devDependencies": {
-    "@types/jest": "^24.0.15",
+    "@types/jest": "^26.0.13",
     "@types/lodash.sortby": "^4.7.6",
-    "@types/mongodb": "^3.1.28",
-    "@types/node": "^12.0.12",
-    "jest": "^24.8.0",
-    "madge": "^3.4.4",
-    "ts-jest": "^24.0.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.2"
+    "@types/mongodb": "^3.5.27",
+    "@types/node": "^14.6.4",
+    "jest": "^26.4.2",
+    "madge": "^3.9.2",
+    "ts-jest": "^26.3.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.2"
   },
+  "main": "lib/CLIEntrypoint.js",
   "scripts": {
     "test": "jest",
     "build": "rm -rf lib && tsc",
-    "dev": "ts-node -r dotenv/config src/CLIEntrypoint.ts"
+    "package": "ncc build --source-map --license licenses.txt",
+    "dev": "ts-node -r dotenv/config src/CLIEntrypoint.ts",
+    "all": "npm run build && npm run package && npm test"
   },
   "dependencies": {
-    "@octokit/graphql": "^3.0.1",
-    "@octokit/rest": "^16.28.4",
-    "dotenv": "^8.0.0",
+    "@actions/core": "^1.2.5",
+    "@actions/github": "^4.0.0",
+    "@octokit/graphql": "^4.5.4",
+    "@octokit/rest": "^18.0.5",
+    "@vercel/ncc": "^0.24.0",
+    "dotenv": "^8.2.0",
+    "js-yaml": "^3.14.0",
     "lodash.sortby": "^4.7.0",
-    "mongodb": "^3.2.7",
-    "tkt": "1.1.0"
+    "mongodb": "^3.6.1",
+    "tkt": "2.0.0"
   }
 }

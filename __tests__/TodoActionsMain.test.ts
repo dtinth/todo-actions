@@ -1,10 +1,11 @@
-import { runMain } from './TodoActionsMain'
-import { resetMockWorld } from './__mocks__/World'
+import { runMain } from '../src/TodoActionsMain'
+import { resetMockWorld } from '../src/__mocks__/World'
 import sortBy from 'lodash.sortby'
 
-jest.mock('./DataStore')
-jest.mock('./CodeRepository')
-jest.mock('./TaskManagementSystem')
+jest.mock('@actions/core')
+jest.mock('../src/DataStore')
+jest.mock('../src/CodeRepository')
+jest.mock('../src/TaskManagementSystem')
 
 const MARKER = 'TODO'
 
@@ -37,11 +38,11 @@ it('works', async () => {
   expect(world.commits[1].files.get('main.js')).toMatch(
     new RegExp(`${MARKER} \\[#\\d+\\]: Hello world`),
   )
+
   expect(world.commits[1].message).toMatch(/#1/)
   expect(world.commits[1].message).toMatch(/#2/)
 
   // Round 1: Assert tasks
-  expect(world.tasks.length).toEqual(2)
   expect(sortBy(world.tasks.map(t => t.title))).toEqual([
     'Hello world',
     'Somebody once told me',

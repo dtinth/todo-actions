@@ -62,7 +62,7 @@ export async function reconcileTasks(todos: ITodo[]) {
       title,
       body,
       state,
-    } = TaskInformationGenerator.generateTaskInformationFromTodo(todo)
+    } = await TaskInformationGenerator.generateTaskInformationFromTodo(todo)
     if (task.state.hash !== state.hash) {
       log.info(
         'Hash for "%s" changed: "%s" => "%s" -- must update task.',
@@ -114,7 +114,7 @@ export async function resolveTask(
     title,
     body,
     state,
-  } = TaskInformationGenerator.generateTaskInformationFromTodo(todo)
+  } = await TaskInformationGenerator.generateTaskInformationFromTodo(todo)
   const taskReference = await TaskManagementSystem.createTask({ title, body })
   taskCreationLock.finish(taskReference, state)
   return taskReference
