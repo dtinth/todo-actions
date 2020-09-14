@@ -416,6 +416,7 @@ const graphql_1 = __webpack_require__(8467);
 const owner = CodeRepository_1.repoContext.repositoryOwner;
 const repo = CodeRepository_1.repoContext.repositoryName;
 const branch = core_1.getInput('branch') || CodeRepository_1.repoContext.defaultBranch;
+const log = tkt_1.logger('TaskInformationGenerator');
 let cache = 'meh';
 function fetchCommit() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -428,7 +429,7 @@ function fetchCommit() {
         }
         cache = '';
         try {
-            const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = yield graphql_1.graphql(`{
+            const { data } = yield graphql_1.graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
         ref(qualifiedName: "${branch}") {
           target {
@@ -448,6 +449,9 @@ function fetchCommit() {
                         tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
                 },
             });
+            const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = data;
+            log.info(`>>= Commit: ${oid}`);
+            log.info(data);
             cache = oid;
         }
         catch (_a) { }

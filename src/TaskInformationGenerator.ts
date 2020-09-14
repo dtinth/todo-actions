@@ -2,7 +2,7 @@ import { getInput } from '@actions/core'
 import { ITodo, ITaskState } from './types'
 import { createHash } from 'crypto'
 import { repoContext } from './CodeRepository'
-import { invariant } from 'tkt'
+import { invariant, logger } from 'tkt'
 import { graphql } from '@octokit/graphql'
 
 type TaskInformation = {
@@ -14,6 +14,8 @@ type TaskInformation = {
 const owner = repoContext.repositoryOwner
 const repo = repoContext.repositoryName
 const branch = getInput('branch') || repoContext.defaultBranch
+
+const log = logger('TaskInformationGenerator')
 
 let cache = 'meh'
 async function fetchCommit(): Promise<string> {
@@ -29,7 +31,7 @@ async function fetchCommit(): Promise<string> {
   cache = ''
 
   try {
-    const { data: { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } } = await graphql(`{
+    const { data } = await graphql(`{
       repository(name: "${repo}", owner: "${owner}") {
         ref(qualifiedName: "${branch}") {
           target {
@@ -49,6 +51,11 @@ async function fetchCommit(): Promise<string> {
           invariant(false, 'Required GITHUB_TOKEN variable.')}`,
       },
     })
+
+    const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = data
+
+    log.info(`>>= Commit: ${oid}`)
+    log.info(data)
 
     cache = oid
   } catch {}
