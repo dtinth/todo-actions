@@ -424,7 +424,8 @@ function fetchCommit() {
             return cache;
         }
         // Some random check to filter out tests
-        if (!('TODO_ACTIONS_MONGO_URL' in process.env)) {
+        if (!('GITHUB_TOKEN' in process.env)) {
+            log.info(`Skipping local testing env`);
             return '';
         }
         cache = '';
@@ -449,12 +450,14 @@ function fetchCommit() {
                         tkt_1.invariant(false, 'Required GITHUB_TOKEN variable.')}`,
                 },
             });
+            console.log(data);
             const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = data;
             log.info(`>>= Commit: ${oid}`);
-            log.info(data);
             cache = oid;
         }
-        catch (_a) { }
+        catch (err) {
+            console.error(err);
+        }
         return cache;
     });
 }

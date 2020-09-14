@@ -24,7 +24,8 @@ async function fetchCommit(): Promise<string> {
   }
 
   // Some random check to filter out tests
-  if (!('TODO_ACTIONS_MONGO_URL' in process.env)) {
+  if (!('GITHUB_TOKEN' in process.env)) {
+    log.info(`Skipping local testing env`)
     return ''
   }
 
@@ -52,13 +53,16 @@ async function fetchCommit(): Promise<string> {
       },
     })
 
+    console.log(data)
+
     const { repository: { ref: { target: { history: { nodes: [{ oid }] } } } } } = data
 
     log.info(`>>= Commit: ${oid}`)
-    log.info(data)
 
     cache = oid
-  } catch {}
+  } catch (err) {
+    console.error(err)
+  }
 
   return cache
 }
