@@ -78,13 +78,13 @@ You can get a free instance on [MongoDB Atlas](https://www.mongodb.com/cloud/atl
      todos:
        runs-on: ubuntu-latest
 
-         steps:
-           - uses: actions/checkout@v1
-           - name: todo-actions
-             uses: dtinth/todo-actions@master
-             env:
-               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-               TODO_ACTIONS_MONGO_URL: ${{ secrets.TODO_ACTIONS_MONGO_URL }}
+       steps:
+         - uses: actions/checkout@v1
+         - name: todo-actions
+           uses: dtinth/todo-actions@master
+           env:
+             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+             TODO_ACTIONS_MONGO_URL: ${{ secrets.TODO_ACTIONS_MONGO_URL }}
    ```
 
    _Recommended: Rename `main.yml` to something else, such as `todos.yml`_
